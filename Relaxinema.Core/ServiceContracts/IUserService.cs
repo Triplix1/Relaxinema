@@ -1,5 +1,5 @@
 ﻿using Relaxinema.Core.Domain.Entities;
-using Relaxinema.Core.DTO;
+using Relaxinema.Core.DTO.User;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,10 +10,11 @@ namespace Relaxinema.Core.ServiceContracts
 {
     public interface IUserService
     {
-        Task<User> GetByIdAsync(Guid id);
-        Task<User> GetByNicknameAsync(string nickname);
-        Task<IEnumerable<User>> GetAllAsync();
-        Task CreateUser(RegisterDto userDto);
+        Task<UserDto?> GetByIdAsync(Guid id);
+        Task<UserDto?> GetByNicknameAsync(string nickname);
+        Task<UserDto?> GetByEmailAsync(string email);
+        Task<IEnumerable<UserDto>> GetAllAsync();
         Task DeleteAsync(Guid id);
+        Task<IEnumerable<string>> GetSubscribedEmailsByFilm(Guid filmId);
     }
 }

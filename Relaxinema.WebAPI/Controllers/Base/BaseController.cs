@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Relaxinema.WebAPI.Controllers.Base
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
     public class BaseController : ControllerBase
     {
     }

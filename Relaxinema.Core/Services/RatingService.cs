@@ -1,0 +1,76 @@
+﻿using AutoMapper;
+using Relaxinema.Core.Domain.Entities;
+using Relaxinema.Core.Domain.RepositoryContracts;
+using Relaxinema.Core.DTO.Rating;
+using Relaxinema.Core.ServiceContracts;
+
+namespace Relaxinema.Core.Services;
+
+public class RatingService : IRatingService
+{
+    private readonly IRatingRepository _ratingRepository;
+    private readonly IFilmRepository _filmRepository;
+    private readonly IUserRepository _userRepository;
+    private readonly IMapper _mapper;
+
+    public RatingService(IRatingRepository ratingRepository, IFilmRepository filmRepository, IUserRepository userRepository, IMapper mapper)
+    {
+        _ratingRepository = ratingRepository;
+        _filmRepository = filmRepository;
+        _userRepository = userRepository;
+        _mapper = mapper;
+    }
+    
+    public async Task<float> GetRatingAsync(Guid filmId)
+    {
+        var film = await GetFilm(filmId);
+
+        return await _ratingRepository.GetFilmMarkAsync(film);
+    }
+
+    public async Task<RatingResponse> GetUserRateAsync(Guid filmId, Guid userId)
+    {
+        var user = await GetUser(userId);
+
+        var film = await GetFilm(filmId);
+
+        var rate =  await _ratingRepository.GetRateAsync(user, film);
+
+        if (rate is null)
+            return new RatingResponse { Rate = 0 };
+
+        return _mapper.Map<RatingResponse>(rate);
+    }
+
+    public async Task<RatingResponse> RateFilmAsync(RatingRequest ratingRequest)
+    {
+        var user = await GetUser(ratingRequest.UserId);
+        var film = await GetFilm(ratingRequest.FilmId);
+
+        var rate = _mapper.Map<Rating>(ratingRequest);
+
+        await _ratingRepository.RateAsync(rate);
+
+        return _mapper.Map<RatingResponse>(rate);
+    }
+    
+    private async Task<User> GetUser(Guid userId)
+    {
+        var user = await _userRepository.GetByIdAsync(userId);
+        
+        if (user is null)
+            throw new KeyNotFoundException("Cannot find user with such id");
+        
+        return user;
+    }
+
+    private async Task<Film> GetFilm(Guid filmId)
+    {
+        var film = await _filmRepository.GetByIdAsync(filmId);
+        
+        if (film is null)
+            throw new KeyNotFoundException("Cannot find film with such id");
+
+        return film;
+    }
+}

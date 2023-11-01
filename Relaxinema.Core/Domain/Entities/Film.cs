@@ -22,9 +22,11 @@ namespace Relaxinema.Core.Domain.Entities
         public string? PhotoPublicId { get; set; }
         public string? SourcesSerialized { get; set; }
         public string Trailer { get; set; } = null!;
+        public DateTime Created { get; set; }
         public ICollection<Genre> Genres { get; set; }
         public ICollection<User> SubscribedUsers { get; set; }
         public ICollection<Comment> Comments { get; set; }
+        public ICollection<Rating> Ratings { get; set; }
 
         [NotMapped]
         public string[] Sources

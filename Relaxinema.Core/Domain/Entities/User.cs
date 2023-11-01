@@ -16,5 +16,6 @@ namespace Relaxinema.Core.Domain.Entities
         public ICollection<Role> Roles { get; set; }
         public ICollection<Film> SubscribedTo { get; set; }
         public ICollection<Comment> Comments { get; set; }
+        public ICollection<Rating> Rates { get; set; }
     }
 }
