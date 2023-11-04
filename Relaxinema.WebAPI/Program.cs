@@ -1,5 +1,8 @@
+using Microsoft.AspNetCore.Mvc;
 using Relaxinema.Core.Extentions;
+using Relaxinema.Core.Helpers;
 using Relaxinema.Infrastructure;
+using Relaxinema.WebAPI.Filters;
 
 namespace Relaxinema.WebAPI
 {
@@ -11,9 +14,13 @@ namespace Relaxinema.WebAPI
 
             // Add services to the container.
 
-            builder.Services.AddControllers();
-            builder.Services.AddCore();
+            builder.Services.AddControllers(options =>
+            {
+                options.Filters.Add(new ValidateModelsFilterAttribute());
+            });
+            builder.Services.AddCore(builder.Configuration);
             builder.Services.AddInfrastructure(builder.Configuration);
+            builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
@@ -34,7 +41,6 @@ namespace Relaxinema.WebAPI
             }
 
             app.UseAuthorization();
-
 
             app.MapControllers();
 

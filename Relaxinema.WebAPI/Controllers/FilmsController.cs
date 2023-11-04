@@ -28,6 +28,12 @@ namespace Relaxinema.WebAPI.Controllers
         {
             return Ok(await _filmService.GetAllAsync(filmParams));
         }
+        
+        [HttpGet("trailers/{n}")]
+        public async Task<ActionResult<IEnumerable<TrailerResponse>>> GetExpectedTrailers([FromRoute]int n)
+        {
+            return Ok(await _filmService.GetFilmTrailers(n));
+        }
 
         [HttpPost("create")]
         public async Task<ActionResult<FilmResponse>> Create([FromBody]FilmAddRequest filmAddRequest)

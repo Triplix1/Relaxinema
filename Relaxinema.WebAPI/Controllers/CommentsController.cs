@@ -9,11 +9,11 @@ using Relaxinema.WebAPI.Controllers.Base;
 
 namespace Relaxinema.WebAPI.Controllers;
 
-public class CommentController : BaseController
+public class CommentsController : BaseController
 {
     private readonly ICommentService _commentService;
 
-    public CommentController(ICommentService commentService)
+    public CommentsController(ICommentService commentService)
     {
         _commentService = commentService;
     }
@@ -21,7 +21,7 @@ public class CommentController : BaseController
     [HttpGet]
     public async Task<ActionResult<PagedList<CommentResponse>>> GetAllComments([FromQuery]CommentParams commentParams)
     {
-        return Ok(await _commentService.GetAllAsync(commentParams));
+        return Ok(await _commentService.GetAllForFilmAsync(commentParams));
     }
 
     [HttpPost("create")]

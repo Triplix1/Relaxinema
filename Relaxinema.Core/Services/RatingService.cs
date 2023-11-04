@@ -44,8 +44,8 @@ public class RatingService : IRatingService
 
     public async Task<RatingResponse> RateFilmAsync(RatingRequest ratingRequest)
     {
-        var user = await GetUser(ratingRequest.UserId);
-        var film = await GetFilm(ratingRequest.FilmId);
+        var user = await GetUser(ratingRequest.UserId.GetValueOrDefault());
+        var film = await GetFilm(ratingRequest.FilmId.GetValueOrDefault());
 
         var rate = _mapper.Map<Rating>(ratingRequest);
 

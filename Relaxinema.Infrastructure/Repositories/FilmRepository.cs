@@ -5,6 +5,7 @@ using Relaxinema.Core.Domain.RepositoryContracts;
 using Relaxinema.Core.Helpers;
 using Relaxinema.Core.Helpers.RepositoryParams;
 using Relaxinema.Infrastructure.DatabaseContext;
+using Relaxinema.Infrastructure.RepositoryHelpers;
 
 namespace Relaxinema.Infrastructure.Repositories
 {
@@ -34,6 +35,19 @@ namespace Relaxinema.Infrastructure.Repositories
             await _context.SaveChangesAsync();
 
             return true;
+        }
+
+        public async Task<IEnumerable<Trailer>> GetTrailers(int n)
+        {
+            return await _context.Films
+                .Where(f => f.IsExpected)
+                .Take(n)
+                .Select(f => new Trailer
+                {
+                    Id = f.Id,
+                    Name = f.Name,
+                    Frame = f.Trailer
+                 }).ToArrayAsync();
         }
 
         public async Task<PagedList<Film>> GetAllAsync(FilmParams filmParams, string[]? includeStrings = null)
@@ -76,11 +90,7 @@ namespace Relaxinema.Infrastructure.Repositories
         {
             var query = _context.Films.AsQueryable();
 
-            if(includeStrings is not null)
-            {
-                foreach(var str in includeStrings)
-                    query = query.Include(str);
-            }                
+            query = IncludeParamsHelper<Film>.IncludeStrings(includeStrings, query);                
 
             if (filmParams.Year is not null)
                 query = query.Where(f => f.Year == filmParams.Year);
@@ -126,5 +136,7 @@ namespace Relaxinema.Infrastructure.Repositories
 
             return await PagedList<Film>.CreateAsync(query, filmParams.PageNumber, filmParams.PageSize);
         }
+
+        
     }
 }

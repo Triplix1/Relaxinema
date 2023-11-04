@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Relaxinema.Core.DTO.Comment;
 using Relaxinema.Core.DTO.Rating;
 
 namespace Relaxinema.Core.MappingProfile
@@ -26,10 +27,14 @@ namespace Relaxinema.Core.MappingProfile
 
             CreateMap<Film, Film>();
             CreateMap<FilmAddRequest, Film>()
-                .ForMember(f => f.Sources, fad => fad.MapFrom(f => f.Sources));
+                .ForMember(f => f.Sources, 
+                    fad => fad
+                        .MapFrom(f => f.Sources));
             CreateMap<FilmUpdateRequest, Film>();
             CreateMap<Film, FilmResponse>()
-                .ForMember(fr => fr.GenreNames, f => f.MapFrom(x => x.Genres.Select(g => g.Name)));
+                .ForMember(fr => fr.GenreNames, 
+                    f => f
+                        .MapFrom(x => x.Genres.Select(g => g.Name)));
 
             CreateMap<Genre, Genre>();
             CreateMap<GenreAddRequest, Genre>();
@@ -39,6 +44,19 @@ namespace Relaxinema.Core.MappingProfile
             CreateMap<Rating, Rating>();
             CreateMap<RatingRequest, Rating>();
             CreateMap<Rating, RatingResponse>();
+
+            CreateMap<Comment, Comment>();
+            CreateMap<CommentAddRequest, Comment>()
+                .ForMember(c => c.Created, 
+                    car => car
+                        .MapFrom(_ => DateTime.Now));
+            CreateMap<CommentUpdateRequest, Comment>();
+            CreateMap<Comment, CommentResponse>();
+
+            CreateMap<Trailer, TrailerResponse>()
+                .ForMember(t => t.Trailer, 
+                    tr => tr
+                        .MapFrom(t => t.Frame));
         }
     }
 }

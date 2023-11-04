@@ -20,4 +20,8 @@
     <ProjectReference Include="..\Relaxinema.Infrastructure\Relaxinema.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Middlewares\" />
+  </ItemGroup>
+
 </Project>

@@ -26,7 +26,7 @@ public class RatingsController : BaseController
         return Ok(await _ratingService.GetUserRateAsync(filmId, userId));
     }
 
-    [HttpPost]
+    [HttpPost("rate")]
     public async Task<ActionResult<RatingResponse>> RateFilm([FromBody] RatingRequest ratingRequest)
     {
         return Ok(await _ratingService.RateFilmAsync(ratingRequest));

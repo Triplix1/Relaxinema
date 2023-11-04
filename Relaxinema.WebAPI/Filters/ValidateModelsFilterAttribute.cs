@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Relaxinema.WebAPI.Filters;
 
-public class ValidateParamsFilterAttribute: ActionFilterAttribute
+public class ValidateModelsFilterAttribute: ActionFilterAttribute
 {
     public override void OnActionExecuting(ActionExecutingContext context)
     {

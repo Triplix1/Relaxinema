@@ -16,7 +16,6 @@ namespace Relaxinema.Core.DTO.Film
         public bool Publish { get; set; }
         public bool IsExpected { get; set; }
         public string? PhotoUrl { get; set; }
-        public string? PhotoPublicId { get; set; }
         public string[] Sources { get; set; }
         public string Trailer { get; set; } = null!;
         public string[] GenreNames { get; set; }

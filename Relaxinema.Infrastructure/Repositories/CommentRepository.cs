@@ -1,42 +1,75 @@
-﻿using Relaxinema.Core.Domain.Entities;
+﻿using System.Runtime.CompilerServices;
+using AutoMapper;
+using Microsoft.EntityFrameworkCore;
+using Relaxinema.Core.Domain.Entities;
 using Relaxinema.Core.Domain.RepositoryContracts;
+using Relaxinema.Core.Helpers;
 using Relaxinema.Core.Helpers.RepositoryParams;
 using Relaxinema.Infrastructure.DatabaseContext;
+using Relaxinema.Infrastructure.RepositoryHelpers;
 
 namespace Relaxinema.Infrastructure.Repositories;
 
 public class CommentRepository : ICommentRepository
 {
     private readonly ApplicationDbContext _context;
+    private readonly IMapper _mapper;
 
-    public CommentRepository(ApplicationDbContext context)
+    public CommentRepository(ApplicationDbContext context, IMapper mapper)
     {
         _context = context;
+        _mapper = mapper;
     }
     public async Task CreateAsync(Comment comment)
     {
         await _context.Comments.AddAsync(comment);
+        await _context.SaveChangesAsync();
     }
 
-    public Task<Comment> GetByIdAsync(Guid id, CommentParams? commentParams = null)
+    public async Task<Comment?> GetByIdAsync(Guid id, string[]? includeStrings = null)
     {
-        throw new NotImplementedException();
+        var query = IncludeParamsHelper<Comment>.IncludeStrings(includeStrings, _context.Comments.AsQueryable());
+
+        return await query.FirstOrDefaultAsync(c => c.Id == id);
     }
 
-    public Task<IEnumerable<Comment>> GetAllAsync(CommentParams commentParams)
+    public async Task<PagedList<Comment>> GetAllForFilmAsync(CommentParams commentParams, string[]? includeStrings = null)
     {
-        throw new NotImplementedException();
+        return await ApplyParams(commentParams, includeStrings);
     }
 
-    public Task<Comment> UpdateAsync(Comment comment)
+    public async Task<Comment?> UpdateAsync(Comment comment)
     {
-        throw new NotImplementedException();
+        var origin = await _context.Comments.FirstOrDefaultAsync(c => c.Id == comment.Id);
+
+        if (origin is null)
+            return null;
+
+        _mapper.Map(comment, origin);
+
+        await _context.SaveChangesAsync();
+
+        return origin;
     }
 
-    public Task<Comment> DeleteAsync(Guid id)
+    public async Task<bool> DeleteAsync(Guid id)
     {
-        throw new NotImplementedException();
+        var origin = await _context.Comments.FirstOrDefaultAsync(c => c.Id == id);
+        
+        if (origin is null)
+            return false;
+
+        _context.Comments.Remove(origin);
+        
+        return await _context.SaveChangesAsync() > 0;
     }
-    
-    private IQueryable<Comment> ApplyParams(CommentParams)
+
+    private async Task<PagedList<Comment>> ApplyParams(CommentParams commentParams, string[]? includeStrings)
+    {
+        var query = _context.Comments.AsQueryable();
+
+        IncludeParamsHelper<Comment>.IncludeStrings(includeStrings, query);
+
+        return await PagedList<Comment>.CreateAsync(query, commentParams.PageNumber, commentParams.PageSize);
+    }
 }

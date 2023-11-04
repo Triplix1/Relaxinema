@@ -1,6 +1,7 @@
 ﻿using Relaxinema.Core.Domain.Entities;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
@@ -10,7 +11,7 @@ namespace Relaxinema.Core.Helpers.RepositoryParams
 {
     public class CommentParams : PaginatedParams
     {
-        public string[]? IncludeParams { get; set; }
-        public Expression<Func<Comment, bool>>? Filter { get; set; }
+        [Required]
+        public Guid? FilmId { get; set; }
     }
 }

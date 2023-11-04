@@ -18,6 +18,8 @@ namespace Relaxinema.Infrastructure
             services.AddScoped<IFilmRepository, FilmRepository>();
             services.AddScoped<IRoleRepository, RoleRepository>();
             services.AddScoped<IGenreRepository, GenreRepository>();
+            services.AddScoped<IRatingRepository, RatingRepository>();
+            services.AddScoped<ICommentRepository, CommentRepository>();
 
             services.AddDbContext<ApplicationDbContext>(options =>
             {

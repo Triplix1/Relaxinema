@@ -13,11 +13,13 @@ namespace Relaxinema.Core.Services
         private readonly IFilmRepository _filmRepository;
         private readonly IMapper _mapper;
         private readonly IGenreRepository _genreRepository;
-        public FilmService(IFilmRepository filmRepository, IMapper mapper, IGenreRepository genreRepository)
+        private readonly IPhotoService _photoService;
+        public FilmService(IFilmRepository filmRepository, IMapper mapper, IGenreRepository genreRepository, IPhotoService photoService)
         {
             _filmRepository = filmRepository;
             _mapper = mapper;
             _genreRepository = genreRepository;
+            _photoService = photoService;
         }
         public async Task<FilmResponse> CreateFilmAsync(FilmAddRequest filmAddRequest)
         {
@@ -26,6 +28,16 @@ namespace Relaxinema.Core.Services
             var film = _mapper.Map<Film>(filmAddRequest);
             film.Created = DateTime.Now;
             film.Genres = new List<Genre>();
+
+            if (filmAddRequest.File is not null)
+            {
+                var result = await _photoService.AddPhotoAsync(filmAddRequest.File);
+
+                if (result.Error != null) throw new ArgumentException(result.Error.Message);
+
+                film.PhotoUrl = result.SecureUrl.AbsoluteUri;
+                film.PhotoPublicId = result.PublicId;
+            }
 
             foreach (var genre in filmAddRequest.GenreNames)
             {
@@ -46,14 +58,15 @@ namespace Relaxinema.Core.Services
         {
             if(!await _filmRepository.DeleteAsync(id))
                 throw new KeyNotFoundException();
+            
         }
 
-        public async Task<PagedList<FilmResponse>> GetAllAsync(FilmParams filmParams)
+        public async Task<PagedList<FilmCardResponse>> GetAllAsync(FilmParams filmParams)
         {
             var pagedList = await _filmRepository.GetAllAsync(filmParams, new[] { nameof(Film.Genres) });
 
-            return new PagedList<FilmResponse>(
-                _mapper.Map<IEnumerable<FilmResponse>>(pagedList), 
+            return new PagedList<FilmCardResponse>(
+                _mapper.Map<IEnumerable<FilmCardResponse>>(pagedList), 
                 pagedList.TotalCount, 
                 pagedList.CurrentPage, 
                 pagedList.PageSize
@@ -91,6 +104,11 @@ namespace Relaxinema.Core.Services
                 throw new KeyNotFoundException();
 
             return _mapper.Map<FilmResponse>(updatedFilm);
+        }
+
+        public async Task<IEnumerable<TrailerResponse>> GetFilmTrailers(int n)
+        {
+            return _mapper.Map<IEnumerable<TrailerResponse>>(await _filmRepository.GetTrailers(n));
         }
     }
 }
