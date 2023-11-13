@@ -42,16 +42,37 @@ public class RatingService : IRatingService
         return _mapper.Map<RatingResponse>(rate);
     }
 
-    public async Task<RatingResponse> RateFilmAsync(RatingRequest ratingRequest)
+    // public async Task<RatingResponse> RateFilmAsync(RatingRequest ratingRequest, Guid userId)
+    // {
+    //     var user = await GetUser(userId);
+    //     var film = await GetFilm(ratingRequest.FilmId.GetValueOrDefault());
+    //
+    //     var rate = _mapper.Map<Rating>(ratingRequest);
+    //     rate.UserId = userId;
+    //
+    //     await _ratingRepository.RateAsync(rate);
+    //
+    //     return _mapper.Map<RatingResponse>(rate);
+    // }
+    
+    public async Task<RatingResponse> RateFilmAsync(RatingRequest ratingRequest, Guid userId)
     {
-        var user = await GetUser(ratingRequest.UserId.GetValueOrDefault());
+        var user = await GetUser(userId);
+        
+        if (user is null)
+            throw new KeyNotFoundException("Cannot find such user");
+        
         var film = await GetFilm(ratingRequest.FilmId.GetValueOrDefault());
 
         var rate = _mapper.Map<Rating>(ratingRequest);
+        rate.UserId = userId;
 
         await _ratingRepository.RateAsync(rate);
 
-        return _mapper.Map<RatingResponse>(rate);
+        return new RatingResponse()
+        {
+            Rate = await _ratingRepository.GetFilmMarkAsync(film)
+        };
     }
     
     private async Task<User> GetUser(Guid userId)

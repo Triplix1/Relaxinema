@@ -9,7 +9,8 @@ namespace Relaxinema.Core.ServiceContracts
     {
         Task<GenreResponse> GetByIdAsync(Guid id);
         Task<GenreResponse> GetByNameAsync(string name);
-        Task<PagedList<GenreResponse>> GetAllAsync(GenreParams genreParams);
+        Task<PagedList<GenreResponse>> GetAllPaginatedAsync(GenreParams genreParams);
+        Task<IEnumerable<string>> GetAllNamesAsync();
         Task<GenreResponse> CreateGenreAsync(GenreAddRequest genreAddRequest);
         Task<GenreResponse> UpdateGenreAsync(GenreUpdateRequest genreUpdateRequest);
         Task DeleteGenreAsync(Guid id);

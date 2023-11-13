@@ -14,6 +14,7 @@ namespace Relaxinema.Core.Domain.RepositoryContracts
         Task<Genre?> GetByIdAsync(Guid id);
         Task<Genre?> GetByNameAsync(string name);
         Task<PagedList<Genre>> GetAllAsync(GenreParams genreParams);
+        Task<IEnumerable<string>> GetAllNamesAsync();
         Task CreateGenreAsync(Genre genre);
         Task<Genre?> UpdateGenreAsync(Genre genre);
         Task<bool> DeleteGenreAsync(Guid id);

@@ -35,6 +35,12 @@ namespace Relaxinema.Core.MappingProfile
                 .ForMember(fr => fr.GenreNames, 
                     f => f
                         .MapFrom(x => x.Genres.Select(g => g.Name)));
+            CreateMap<Film, FilmCardResponse>()
+                .ForMember(fr => fr.GenreNames, 
+                    f => f
+                        .MapFrom(x => x.Genres.Select(g => g.Name)));
+            CreateMap<Film, TrailerResponse>();
+            
 
             CreateMap<Genre, Genre>();
             CreateMap<GenreAddRequest, Genre>();

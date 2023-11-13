@@ -17,6 +17,12 @@ namespace Relaxinema.Infrastructure.Repositories
             _context = applicationDbContext;
             _mapper = mapper;
         }
+
+        public async Task<IEnumerable<string>> GetAllNamesAsync()
+        {
+            return await _context.Genres.Select(g => g.Name).ToListAsync();
+        }
+
         public async Task CreateGenreAsync(Genre genre)
         {
             _context.Genres.Add(genre);

@@ -18,17 +18,23 @@ namespace Relaxinema.WebAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<FilmResponse>> GetById([FromRoute]Guid id)
+        public async Task<ActionResult<GenreResponse>> GetById([FromRoute]Guid id)
         {
             return Ok(await _genreService.GetByIdAsync(id));
         }
 
         [HttpGet]
-        public async Task<ActionResult<PagedList<FilmResponse>>> GetAll([FromQuery]GenreParams genreParams)
+        public async Task<ActionResult<PagedList<GenreResponse>>> GetAll([FromQuery]GenreParams genreParams)
         {
-            return Ok(await _genreService.GetAllAsync(genreParams));
+            return Ok(await _genreService.GetAllPaginatedAsync(genreParams));
         }
 
+        [HttpGet("names")]
+        public async Task<ActionResult<IEnumerable<string>>> GetAllGenresNames()
+        {
+            return Ok(await _genreService.GetAllNamesAsync());
+        }
+        
         [HttpPost("create")]
         public async Task<ActionResult<GenreResponse>> Create([FromBody]GenreAddRequest genreAddRequest)
         {

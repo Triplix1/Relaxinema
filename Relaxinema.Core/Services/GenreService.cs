@@ -22,10 +22,14 @@ namespace Relaxinema.Core.Services
             _genreRepository = genreRepository;
             _mapper = mapper;
         }
+
+        public async Task<IEnumerable<string>> GetAllNamesAsync()
+        {
+            return await _genreRepository.GetAllNamesAsync();
+        }
+
         public async Task<GenreResponse> CreateGenreAsync(GenreAddRequest genreAddRequest)
         {
-            ValidationHelper.ModelValidation(genreAddRequest);
-
             var genre = await _genreRepository.GetByNameAsync(genreAddRequest.Name);
 
             if (genre is not null)
@@ -44,12 +48,12 @@ namespace Relaxinema.Core.Services
                 throw new KeyNotFoundException("Cannot find genre with such id");
         }
 
-        public async Task<PagedList<GenreResponse>> GetAllAsync(GenreParams genreParams)
+        public async Task<PagedList<GenreResponse>> GetAllPaginatedAsync(GenreParams genreParams)
         {
             var response = await _genreRepository.GetAllAsync(genreParams);
 
             return new PagedList<GenreResponse>(
-                _mapper.Map<IEnumerable<GenreResponse>>(response),
+                _mapper.Map<IEnumerable<GenreResponse>>(response.Items),
                 response.TotalCount,
                 response.CurrentPage,
                 response.PageSize
@@ -78,8 +82,6 @@ namespace Relaxinema.Core.Services
 
         public async Task<GenreResponse> UpdateGenreAsync(GenreUpdateRequest genreUpdateRequest)
         {
-            ValidationHelper.ModelValidation(genreUpdateRequest);
-
             var genre = _mapper.Map<Genre>(genreUpdateRequest); 
 
             var result = await _genreRepository.UpdateGenreAsync(genre);

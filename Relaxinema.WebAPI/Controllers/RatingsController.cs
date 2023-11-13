@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Relaxinema.Core.DTO.Rating;
+using Relaxinema.Core.Extentions;
 using Relaxinema.Core.ServiceContracts;
 using Relaxinema.WebAPI.Controllers.Base;
 
@@ -20,15 +23,21 @@ public class RatingsController : BaseController
         return Ok(await _ratingService.GetRatingAsync(filmId));
     }
 
-    [HttpGet("{filmId}/{userId}")]
-    public async Task<ActionResult<RatingResponse>> GetUserRate([FromRoute] Guid filmId, [FromRoute] Guid userId)
+    [Authorize]
+    [HttpGet("user-rate/{filmId}")]
+    public async Task<ActionResult<RatingResponse>> GetUserRate([FromRoute] Guid filmId)
     {
+        var userId = User.GetUserId();
+        
         return Ok(await _ratingService.GetUserRateAsync(filmId, userId));
     }
 
-    [HttpPost("rate")]
+    [Authorize]
+    [HttpPost]
     public async Task<ActionResult<RatingResponse>> RateFilm([FromBody] RatingRequest ratingRequest)
     {
-        return Ok(await _ratingService.RateFilmAsync(ratingRequest));
+        var userId = User.GetUserId();
+        
+        return Ok(await _ratingService.RateFilmAsync(ratingRequest, userId));
     }
 }

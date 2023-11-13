@@ -18,5 +18,6 @@ namespace Relaxinema.Core.ServiceContracts
         Task DeleteAsync(Guid id);
         Task<FilmResponse> UpdateFilmAsync(FilmUpdateRequest filmUpdateRequest);
         Task<IEnumerable<TrailerResponse>> GetFilmTrailers(int n);
+        Task<IEnumerable<short>> GetYears();
     }
 }

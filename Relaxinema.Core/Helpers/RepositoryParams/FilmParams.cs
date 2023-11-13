@@ -10,6 +10,7 @@ namespace Relaxinema.Core.Helpers.RepositoryParams
 {
     public class FilmParams : PaginatedParams
     {
+        public bool? Expected { get; set; }
         public short? Year { get; set; }
         public string? Genre { get; set; }
         public OrderByParams? OrderByParams { get; set; }

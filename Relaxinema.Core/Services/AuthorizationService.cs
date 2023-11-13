@@ -28,8 +28,6 @@ namespace Relaxinema.Core.Services
         }
         public async Task<AuthorizationResponse> LoginAsync(LoginDto loginDto)
         {
-            ValidationHelper.ModelValidation(loginDto);
-
             var user = await _userRepository.GetByEmailAsync(loginDto.Email, new UserParams() { IncludeProperties = new[] { nameof(User.Roles) } });
 
             if (user == null) throw new AuthorizationException("Invalid Username");
@@ -52,9 +50,6 @@ namespace Relaxinema.Core.Services
 
         public async Task<AuthorizationResponse> RegisterUserAsync(RegisterDto registerDto)
         {
-
-            ValidationHelper.ModelValidation(registerDto);
-
             var userWithSameNickname = await _userRepository.GetByNicknameAsync(registerDto.Nickname);
 
             if (userWithSameNickname != null)

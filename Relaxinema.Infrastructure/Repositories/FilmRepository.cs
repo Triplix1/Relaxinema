@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Net;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Relaxinema.Core.Domain.Entities;
 using Relaxinema.Core.Domain.RepositoryContracts;
@@ -48,6 +49,11 @@ namespace Relaxinema.Infrastructure.Repositories
                     Name = f.Name,
                     Frame = f.Trailer
                  }).ToArrayAsync();
+        }
+
+        public async Task<IEnumerable<short>> GetFilmYears()
+        {
+            return await _context.Films.Where(f => f.Year.HasValue).Select(f => f.Year.Value).Distinct().ToArrayAsync();
         }
 
         public async Task<PagedList<Film>> GetAllAsync(FilmParams filmParams, string[]? includeStrings = null)

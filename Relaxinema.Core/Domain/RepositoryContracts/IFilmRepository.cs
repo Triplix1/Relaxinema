@@ -12,5 +12,6 @@ namespace Relaxinema.Core.Domain.RepositoryContracts
         Task<Film?> UpdateAsync(Film entity);
         Task<bool> DeleteAsync(Guid id);
         Task<IEnumerable<Trailer>> GetTrailers(int n);
+        Task<IEnumerable<short>> GetFilmYears();
     }
 }

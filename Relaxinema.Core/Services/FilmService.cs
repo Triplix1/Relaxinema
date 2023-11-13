@@ -23,8 +23,6 @@ namespace Relaxinema.Core.Services
         }
         public async Task<FilmResponse> CreateFilmAsync(FilmAddRequest filmAddRequest)
         {
-            ValidationHelper.ModelValidation(filmAddRequest);
-
             var film = _mapper.Map<Film>(filmAddRequest);
             film.Created = DateTime.Now;
             film.Genres = new List<Genre>();
@@ -66,7 +64,7 @@ namespace Relaxinema.Core.Services
             var pagedList = await _filmRepository.GetAllAsync(filmParams, new[] { nameof(Film.Genres) });
 
             return new PagedList<FilmCardResponse>(
-                _mapper.Map<IEnumerable<FilmCardResponse>>(pagedList), 
+                _mapper.Map<IEnumerable<FilmCardResponse>>(pagedList.Items), 
                 pagedList.TotalCount, 
                 pagedList.CurrentPage, 
                 pagedList.PageSize
@@ -85,8 +83,6 @@ namespace Relaxinema.Core.Services
 
         public async Task<FilmResponse> UpdateFilmAsync(FilmUpdateRequest filmUpdateRequest)
         {
-            ValidationHelper.ModelValidation(filmUpdateRequest);
-
             var film = _mapper.Map<Film>(filmUpdateRequest);
             film.Genres = new List<Genre>();
 
@@ -109,6 +105,11 @@ namespace Relaxinema.Core.Services
         public async Task<IEnumerable<TrailerResponse>> GetFilmTrailers(int n)
         {
             return _mapper.Map<IEnumerable<TrailerResponse>>(await _filmRepository.GetTrailers(n));
+        }
+
+        public async Task<IEnumerable<short>> GetYears()
+        {
+            return await _filmRepository.GetFilmYears();
         }
     }
 }

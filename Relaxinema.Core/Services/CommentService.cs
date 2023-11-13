@@ -40,8 +40,6 @@ public class CommentService : ICommentService
 
     public async Task<CommentResponse> CreateCommentAsync(CommentAddRequest commentAddRequest)
     {
-        ValidationHelper.ModelValidation(commentAddRequest);
-        
         var user = await GetUser(commentAddRequest.UserId.Value);
 
         var film = await GetFilm(commentAddRequest.FilmId.Value);

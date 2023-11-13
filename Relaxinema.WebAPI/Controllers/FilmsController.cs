@@ -24,7 +24,7 @@ namespace Relaxinema.WebAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<PagedList<FilmResponse>>> GetAllFilms([FromQuery]FilmParams filmParams)
+        public async Task<ActionResult<PagedList<FilmResponse>>> GetAllFilms([FromHeader]FilmParams filmParams)
         {
             return Ok(await _filmService.GetAllAsync(filmParams));
         }
@@ -33,6 +33,12 @@ namespace Relaxinema.WebAPI.Controllers
         public async Task<ActionResult<IEnumerable<TrailerResponse>>> GetExpectedTrailers([FromRoute]int n)
         {
             return Ok(await _filmService.GetFilmTrailers(n));
+        }
+
+        [HttpGet("years")]
+        public async Task<ActionResult<IEnumerable<short>>> GetYears()
+        {
+            return Ok(await _filmService.GetYears());
         }
 
         [HttpPost("create")]
