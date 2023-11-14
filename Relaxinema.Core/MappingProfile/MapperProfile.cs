@@ -58,7 +58,10 @@ namespace Relaxinema.Core.MappingProfile
                         .MapFrom(_ => DateTime.Now));
             CreateMap<CommentUpdateRequest, Comment>();
             CreateMap<Comment, CommentResponse>()
-                .ForMember(c => c.UserNickname, cr => cr.MapFrom(c => c.User.Nickname));
+                .ForMember(c => c.UserNickname, 
+                    cr => 
+                        cr.MapFrom(c => c.User.Nickname)
+                        );
 
             CreateMap<Trailer, TrailerResponse>()
                 .ForMember(t => t.Trailer, 

@@ -21,9 +21,10 @@ public class CommentsController : BaseController
     }
 
     [HttpGet]
-    public async Task<ActionResult<PagedList<CommentResponse>>> GetAllComments([FromQuery]CommentParams commentParams)
+    public async Task<ActionResult<PagedList<CommentResponse>>> GetAllComments([FromHeader]CommentParams commentParams)
     {
-        return Ok(await _commentService.GetAllForFilmAsync(commentParams));
+        var result = await _commentService.GetAllForFilmAsync(commentParams);
+        return Ok(result);
     }
 
     [Authorize]

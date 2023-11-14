@@ -45,7 +45,7 @@ public class CommentRepository : ICommentRepository
         if (origin is null)
             return null;
 
-        _mapper.Map(comment, origin);
+        origin.Text = comment.Text;
 
         await _context.SaveChangesAsync();
 
@@ -68,8 +68,10 @@ public class CommentRepository : ICommentRepository
     {
         var query = _context.Comments.AsQueryable();
 
-        IncludeParamsHelper<Comment>.IncludeStrings(includeStrings, query);
+        query = IncludeParamsHelper<Comment>.IncludeStrings(includeStrings, query);
+        
+        
 
-        return await PagedList<Comment>.CreateAsync(query, commentParams.PageNumber, commentParams.PageSize);
+        return await PagedList<Comment>.CreateAsync(query.OrderByDescending(c => c.Created), commentParams.PageNumber, commentParams.PageSize);
     }
 }

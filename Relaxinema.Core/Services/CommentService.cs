@@ -35,7 +35,14 @@ public class CommentService : ICommentService
 
     public async Task<PagedList<CommentResponse>> GetAllForFilmAsync(CommentParams commentParams)
     {
-        return _mapper.Map<PagedList<CommentResponse>>(await _commentRepository.GetAllForFilmAsync(commentParams, new []{nameof(Comment.User)}));
+        var pagedList = await _commentRepository.GetAllForFilmAsync(commentParams, new[] { nameof(Comment.User) });
+        
+        return new PagedList<CommentResponse>(
+            _mapper.Map<IEnumerable<CommentResponse>>(pagedList.Items),
+                pagedList.TotalCount,
+            pagedList.CurrentPage,
+            pagedList.PageSize
+            );
     }
 
     public async Task<CommentResponse> CreateCommentAsync(CommentAddRequest commentAddRequest, Guid userId)
@@ -47,6 +54,8 @@ public class CommentService : ICommentService
         var film = await GetFilm(commentAddRequest.FilmId.Value);
 
         var comment = _mapper.Map<Comment>(commentAddRequest);
+
+        comment.UserId = userId;
 
         await _commentRepository.CreateAsync(comment);
 
