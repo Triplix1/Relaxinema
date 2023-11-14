@@ -1,7 +1,9 @@
 ﻿using System.Runtime.CompilerServices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Relaxinema.Core.Domain.Entities;
 using Relaxinema.Core.DTO.Comment;
+using Relaxinema.Core.Extentions;
 using Relaxinema.Core.Helpers;
 using Relaxinema.Core.Helpers.RepositoryParams;
 using Relaxinema.Core.ServiceContracts;
@@ -24,10 +26,12 @@ public class CommentsController : BaseController
         return Ok(await _commentService.GetAllForFilmAsync(commentParams));
     }
 
+    [Authorize]
     [HttpPost("create")]
     public async Task<ActionResult<CommentResponse>> CreateComment([FromBody]CommentAddRequest commentAddRequest)
     {
-        return Ok(await _commentService.CreateCommentAsync(commentAddRequest));
+        var userId = User.GetUserId();
+        return Ok(await _commentService.CreateCommentAsync(commentAddRequest, userId));
     }
 
     [HttpPut("edit")]

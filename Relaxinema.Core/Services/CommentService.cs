@@ -35,12 +35,14 @@ public class CommentService : ICommentService
 
     public async Task<PagedList<CommentResponse>> GetAllForFilmAsync(CommentParams commentParams)
     {
-        return _mapper.Map<PagedList<CommentResponse>>(await _commentRepository.GetAllForFilmAsync(commentParams));
+        return _mapper.Map<PagedList<CommentResponse>>(await _commentRepository.GetAllForFilmAsync(commentParams, new []{nameof(Comment.User)}));
     }
 
-    public async Task<CommentResponse> CreateCommentAsync(CommentAddRequest commentAddRequest)
+    public async Task<CommentResponse> CreateCommentAsync(CommentAddRequest commentAddRequest, Guid userId)
     {
-        var user = await GetUser(commentAddRequest.UserId.Value);
+        var user = await GetUser(userId);
+        if (user is null)
+            throw new KeyNotFoundException("Cannot find user with such id");
 
         var film = await GetFilm(commentAddRequest.FilmId.Value);
 

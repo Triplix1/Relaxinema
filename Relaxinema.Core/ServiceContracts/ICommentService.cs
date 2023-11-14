@@ -8,7 +8,7 @@ public interface ICommentService
 {
     Task<CommentResponse> GetByIdAsync(Guid id);
     Task<PagedList<CommentResponse>> GetAllForFilmAsync(CommentParams commentParams);
-    Task<CommentResponse> CreateCommentAsync(CommentAddRequest commentAddRequest);
+    Task<CommentResponse> CreateCommentAsync(CommentAddRequest commentAddRequest, Guid userId);
     Task<CommentResponse> UpdateCommentAsync(CommentUpdateRequest commentUpdateRequest);
     Task DeleteAsync(Guid id);
 }
