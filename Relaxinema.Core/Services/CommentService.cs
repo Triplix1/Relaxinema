@@ -62,9 +62,11 @@ public class CommentService : ICommentService
         return _mapper.Map<CommentResponse>(comment);
     }
 
-    public async Task<CommentResponse> UpdateCommentAsync(CommentUpdateRequest commentUpdateRequest)
+    public async Task<CommentResponse> UpdateCommentAsync(CommentUpdateRequest commentUpdateRequest, Guid userId)
     {
         var comment = _mapper.Map<Comment>(commentUpdateRequest);
+
+        comment.UserId = userId;
 
         var response = await _commentRepository.UpdateAsync(comment);
 

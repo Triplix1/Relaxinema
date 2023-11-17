@@ -35,10 +35,12 @@ public class CommentsController : BaseController
         return Ok(await _commentService.CreateCommentAsync(commentAddRequest, userId));
     }
 
+    [Authorize]
     [HttpPut("edit")]
     public async Task<ActionResult<CommentResponse>> UpdateComment([FromBody]CommentUpdateRequest commentUpdateRequest)
     {
-        return Ok(await _commentService.UpdateCommentAsync(commentUpdateRequest));
+        var userId = User.GetUserId();
+        return Ok(await _commentService.UpdateCommentAsync(commentUpdateRequest, userId));
     }
 
     [HttpDelete("delete/{id}")]

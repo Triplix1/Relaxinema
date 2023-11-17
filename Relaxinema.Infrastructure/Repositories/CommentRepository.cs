@@ -40,7 +40,7 @@ public class CommentRepository : ICommentRepository
 
     public async Task<Comment?> UpdateAsync(Comment comment)
     {
-        var origin = await _context.Comments.FirstOrDefaultAsync(c => c.Id == comment.Id);
+        var origin = await _context.Comments.Include(c => c.User).FirstOrDefaultAsync(c => c.Id == comment.Id);
 
         if (origin is null)
             return null;
