@@ -29,8 +29,10 @@ namespace Relaxinema.Core.MappingProfile
             CreateMap<FilmAddRequest, Film>()
                 .ForMember(f => f.Sources, 
                     fad => fad
-                        .MapFrom(f => f.Sources));
-            CreateMap<FilmUpdateRequest, Film>();
+                        .MapFrom(f => f.SourceNames.Split(",", StringSplitOptions.None)));
+            CreateMap<FilmUpdateRequest, Film>()
+                .ForMember(f => f.Sources, f => f
+                    .MapFrom(fr => fr.SourceNames.Split(",",StringSplitOptions.None)));
             CreateMap<Film, FilmResponse>()
                 .ForMember(fr => fr.GenreNames, 
                     f => f

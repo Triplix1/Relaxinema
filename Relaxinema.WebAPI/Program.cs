@@ -15,11 +15,11 @@ namespace Relaxinema.WebAPI
 
             // Add services to the container.
 
-            builder.Services.AddControllers();
-            // builder.Services.AddControllers(options =>
-            // {
-            //     options.Filters.Add(new ValidateModelsFilterAttribute());
-            // });
+            // builder.Services.AddControllers();
+            builder.Services.AddControllers(options =>
+            {
+                options.Filters.Add(new ValidateModelsFilterAttribute());
+            });
             
             builder.Services.AddCore(builder.Configuration);
             builder.Services.AddInfrastructure(builder.Configuration);

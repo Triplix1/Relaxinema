@@ -20,12 +20,11 @@ namespace Relaxinema.Core.DTO.Film
         public bool? Publish { get; set; }
         [Required]
         public bool? IsExpected { get; set; }
-        [Required]
         public IFormFile? File { get; set; }
-        public string[] Sources { get; set; }
+        public string? SourceNames { get; set; }
         [Required]
         public string Trailer { get; set; } = null!;
         [Required]
-        public string[] GenreNames { get; set; } = null!;
+        public string GenreNames { get; set; } = null!;
     }
 }

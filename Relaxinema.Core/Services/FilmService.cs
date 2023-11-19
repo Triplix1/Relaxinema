@@ -47,7 +47,7 @@ namespace Relaxinema.Core.Services
                 film.PhotoPublicId = result.PublicId;
             }
 
-            foreach (var genre in filmAddRequest.GenreNames)
+            foreach (var genre in filmAddRequest.GenreNames.Split(","))
             {
                 var foundGenre = await _genreRepository.GetByNameAsync(genre);
 
@@ -133,7 +133,7 @@ namespace Relaxinema.Core.Services
                 film.PhotoPublicId = result.PublicId;
             }
             
-            foreach (var genre in filmUpdateRequest.GenreNames)
+            foreach (var genre in filmUpdateRequest.GenreNames.Split(","))
             {
                 var foundGenre = await _genreRepository.GetByNameAsync(genre);
 
