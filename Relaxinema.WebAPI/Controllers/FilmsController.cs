@@ -42,13 +42,13 @@ namespace Relaxinema.WebAPI.Controllers
         }
 
         [HttpPost("create")]
-        public async Task<ActionResult<FilmResponse>> Create([FromBody]FilmAddRequest filmAddRequest)
+        public async Task<ActionResult<FilmResponse>> Create([FromForm]FilmAddRequest filmAddRequest)
         {
             return Ok(await _filmService.CreateFilmAsync(filmAddRequest));
         }
 
         [HttpPut("edit")]
-        public async Task<ActionResult<FilmResponse>> UpdateFilm([FromBody]FilmUpdateRequest filmUpdateRequest)
+        public async Task<ActionResult<FilmResponse>> UpdateFilm([FromForm]FilmUpdateRequest filmUpdateRequest)
         {
             return Ok(await _filmService.UpdateFilmAsync(filmUpdateRequest));
         }

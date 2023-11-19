@@ -46,6 +46,6 @@ public class PhotoService : IPhotoService
     {
         var deletionParams = new DeletionParams(publicId);
 
-        return await _cloudinary.DestroyAsync(deletionParams);
+        return await _cloudinary.DestroyAsync(deletionParams);   
     }
 }

@@ -69,8 +69,9 @@ public class CommentRepository : ICommentRepository
         var query = _context.Comments.AsQueryable();
 
         query = IncludeParamsHelper<Comment>.IncludeStrings(includeStrings, query);
-        
-        
+
+        if (commentParams.FilmId is not null)
+            query = query.Where(c => c.FilmId == commentParams.FilmId);
 
         return await PagedList<Comment>.CreateAsync(query.OrderByDescending(c => c.Created), commentParams.PageNumber, commentParams.PageSize);
     }

@@ -23,6 +23,16 @@ namespace Relaxinema.Core.Services
         }
         public async Task<FilmResponse> CreateFilmAsync(FilmAddRequest filmAddRequest)
         {
+            if (filmAddRequest.Year == 0)
+            {
+                filmAddRequest.Year = null;
+            }
+            
+            if (filmAddRequest.Limitation == 0)
+            {
+                filmAddRequest.Limitation = null;
+            }
+            
             var film = _mapper.Map<Film>(filmAddRequest);
             film.Created = DateTime.Now;
             film.Genres = new List<Genre>();
@@ -83,9 +93,46 @@ namespace Relaxinema.Core.Services
 
         public async Task<FilmResponse> UpdateFilmAsync(FilmUpdateRequest filmUpdateRequest)
         {
+            Film? oldFilm;
+            if(filmUpdateRequest.Id.HasValue)
+                oldFilm = await _filmRepository.GetByIdAsync(filmUpdateRequest.Id.Value);
+            else
+                throw new KeyNotFoundException();
+
+            if (oldFilm is null)
+                throw new KeyNotFoundException();
+            
+            if (filmUpdateRequest.Year == 0)
+            {
+                filmUpdateRequest.Year = null;
+            }
+            
+            if (filmUpdateRequest.Limitation == 0)
+            {
+                filmUpdateRequest.Limitation = null;
+            }
+            
             var film = _mapper.Map<Film>(filmUpdateRequest);
             film.Genres = new List<Genre>();
 
+            if (filmUpdateRequest.File is null)
+            {
+                film.PhotoPublicId = oldFilm.PhotoPublicId;
+                film.PhotoUrl = oldFilm.PhotoUrl;
+            }
+            else
+            {
+                var result = await _photoService.AddPhotoAsync(filmUpdateRequest.File);
+
+                if (result.Error != null) throw new ArgumentException(result.Error.Message);
+                
+                if(oldFilm.PhotoPublicId is not null)
+                    await _photoService.DeletePhotoAsync(oldFilm.PhotoPublicId);
+
+                film.PhotoUrl = result.SecureUrl.AbsoluteUri;
+                film.PhotoPublicId = result.PublicId;
+            }
+            
             foreach (var genre in filmUpdateRequest.GenreNames)
             {
                 var foundGenre = await _genreRepository.GetByNameAsync(genre);

@@ -12,13 +12,15 @@ namespace Relaxinema.Core.DTO.Film
     {
         [Required]
         public string Name { get; set; } = null!;
-        public short? Year { get; set; }
-        public short? Limitation { get; set; }
-        public string? Description { get; set; }
+
+        public short? Year { get; set; } = null;
+        public short? Limitation { get; set; } = null;
+        public string? Description { get; set; } = null;
         [Required]
         public bool? Publish { get; set; }
         [Required]
         public bool? IsExpected { get; set; }
+        [Required]
         public IFormFile? File { get; set; }
         public string[] Sources { get; set; }
         [Required]
