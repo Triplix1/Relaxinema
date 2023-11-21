@@ -11,22 +11,24 @@ namespace Relaxinema.Core.DTO.Film
     public class FilmUpdateRequest
     {
         [Required]
-        public Guid? Id { get; set; }
+        public Guid? Id { get; set; } = null!;
         [Required]
         public string Name { get; set; } = null!;
         public short? Year { get; set; }
         public short? Limitation { get; set; }
         public string? Description { get; set; }
+
         [Required]
-        public bool? Publish { get; set; }
+        public bool? Publish { get; set; } = null!;
+
         [Required]
-        public bool? IsExpected { get; set; }
+        public bool? IsExpected { get; set; } = null!;
         public IFormFile? File { get; set; }
         public string? SourceNames { get; set; }
         [Required]
         public string Trailer { get; set; } = null!;
-        
+
         [Required]
-        public string? GenreNames { get; set; }
+        public string? GenreNames { get; set; } = null!;
     }
 }

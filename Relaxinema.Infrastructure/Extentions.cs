@@ -20,6 +20,7 @@ namespace Relaxinema.Infrastructure
             services.AddScoped<IGenreRepository, GenreRepository>();
             services.AddScoped<IRatingRepository, RatingRepository>();
             services.AddScoped<ICommentRepository, CommentRepository>();
+            services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
 
             services.AddDbContext<ApplicationDbContext>(options =>
             {

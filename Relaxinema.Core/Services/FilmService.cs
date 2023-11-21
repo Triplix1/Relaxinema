@@ -4,6 +4,7 @@ using Relaxinema.Core.Domain.RepositoryContracts;
 using Relaxinema.Core.DTO.Film;
 using Relaxinema.Core.Helpers;
 using Relaxinema.Core.Helpers.RepositoryParams;
+using Relaxinema.Core.MailConfig;
 using Relaxinema.Core.ServiceContracts;
 
 namespace Relaxinema.Core.Services
@@ -14,12 +15,17 @@ namespace Relaxinema.Core.Services
         private readonly IMapper _mapper;
         private readonly IGenreRepository _genreRepository;
         private readonly IPhotoService _photoService;
-        public FilmService(IFilmRepository filmRepository, IMapper mapper, IGenreRepository genreRepository, IPhotoService photoService)
+        private readonly ISubscriptionRepository _subscriptionRepository;
+        private readonly IMailService _mailService;
+        
+        public FilmService(IFilmRepository filmRepository, IMapper mapper, IGenreRepository genreRepository, IPhotoService photoService, ISubscriptionRepository subscriptionRepository, IMailService mailService)
         {
             _filmRepository = filmRepository;
             _mapper = mapper;
             _genreRepository = genreRepository;
             _photoService = photoService;
+            _subscriptionRepository = subscriptionRepository;
+            _mailService = mailService;
         }
         public async Task<FilmResponse> CreateFilmAsync(FilmAddRequest filmAddRequest)
         {
@@ -139,6 +145,19 @@ namespace Relaxinema.Core.Services
 
                 if (foundGenre is not null)
                     film.Genres.Add(foundGenre);
+            }
+
+            if (oldFilm.IsExpected && !film.IsExpected)
+            {
+                var message = new MessageRequest()
+                {
+                    To = (await _subscriptionRepository.GetAllSubscriptionsByFilm(oldFilm.Id)).Select(s => s.User.Email)
+                        .ToList(),
+                    Subject = "Film has been upload",
+                    Content = $@"<img src=""{film.PhotoUrl}"" style=""width:200px"">"
+                };
+                await _mailService.SendHtmlAsync(message);
+                await _subscriptionRepository.DeleteByFilm(oldFilm.Id);
             }
 
             var updatedFilm = await _filmRepository.UpdateAsync(film);

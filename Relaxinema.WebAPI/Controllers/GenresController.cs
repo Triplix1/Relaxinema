@@ -24,7 +24,7 @@ namespace Relaxinema.WebAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<PagedList<GenreResponse>>> GetAll([FromQuery]GenreParams genreParams)
+        public async Task<ActionResult<PagedList<GenreResponse>>> GetAll([FromHeader]GenreParams genreParams)
         {
             return Ok(await _genreService.GetAllPaginatedAsync(genreParams));
         }

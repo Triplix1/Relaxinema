@@ -23,6 +23,8 @@ namespace Relaxinema.Core.Extentions
             services.AddScoped<IRatingService, RatingService>();
             services.AddScoped<ICommentService, CommentService>();
             services.AddScoped<IPhotoService, PhotoService>();
+            services.AddTransient<IMailService, MailService>();
+            services.AddScoped<ISubscriptionService, SubscriptionService>();
             
             return services;
         }

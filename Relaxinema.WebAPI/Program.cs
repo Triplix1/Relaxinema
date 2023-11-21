@@ -1,6 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Relaxinema.Core.Extentions;
 using Relaxinema.Core.Helpers;
+using Relaxinema.Core.MailConfig;
+using Relaxinema.Core.ServiceContracts;
+using Relaxinema.Core.Services;
 using Relaxinema.Infrastructure;
 using Relaxinema.WebAPI.Filters;
 using Relaxinema.WebAPI.Middlewares;
@@ -24,6 +27,7 @@ namespace Relaxinema.WebAPI
             builder.Services.AddCore(builder.Configuration);
             builder.Services.AddInfrastructure(builder.Configuration);
             builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
+            builder.Services.Configure<MailConfig>(builder.Configuration.GetSection("MailConfig"));
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();

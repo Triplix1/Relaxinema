@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Relaxinema.Core.DTO.Comment;
 using Relaxinema.Core.DTO.Rating;
+using Relaxinema.Core.DTO.Subscribe;
 
 namespace Relaxinema.Core.MappingProfile
 {
@@ -69,6 +70,9 @@ namespace Relaxinema.Core.MappingProfile
                 .ForMember(t => t.Trailer, 
                     tr => tr
                         .MapFrom(t => t.Frame));
+
+            CreateMap<SubscribeAddRequest, Subscription>();
+            CreateMap<Subscription, SubscribeResponse>();
         }
     }
 }
