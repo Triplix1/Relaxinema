@@ -9,6 +9,6 @@ public interface ICommentService
     Task<CommentResponse> GetByIdAsync(Guid id);
     Task<PagedList<CommentResponse>> GetAllForFilmAsync(CommentParams commentParams);
     Task<CommentResponse> CreateCommentAsync(CommentAddRequest commentAddRequest, Guid userId);
-    Task<CommentResponse> UpdateCommentAsync(CommentUpdateRequest commentUpdateRequest, Guid userId);
-    Task DeleteAsync(Guid id);
+    Task<CommentResponse> UpdateCommentAsync(CommentUpdateRequest commentUpdateRequest, Guid userId, bool admin);
+    Task DeleteAsync(Guid id, Guid userId ,bool admin);
 }

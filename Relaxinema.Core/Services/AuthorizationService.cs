@@ -54,16 +54,14 @@ namespace Relaxinema.Core.Services
 
             if (userWithSameNickname != null)
             {
-                //throw new AuthorizationException("Here is already user with the same nickname");
-                await _userRepository.DeleteAsync(userWithSameNickname.Id);
+                throw new AuthorizationException("Here is already user with the same nickname");
             }
 
             var userWithSameEmail = await _userRepository.GetByEmailAsync(registerDto.Email);
 
             if (userWithSameEmail != null)
             {
-                //throw new AuthorizationException("Here is already user with the same email");
-                await _userRepository.DeleteAsync(userWithSameEmail.Id);
+                throw new AuthorizationException("Here is already user with the same email");
             }
 
             var user = _mapper.Map<User>(registerDto);

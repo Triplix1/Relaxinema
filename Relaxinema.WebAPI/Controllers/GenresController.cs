@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Relaxinema.Core.DTO.Film;
 using Relaxinema.Core.DTO.Genre;
@@ -24,6 +25,7 @@ namespace Relaxinema.WebAPI.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<PagedList<GenreResponse>>> GetAll([FromHeader]GenreParams genreParams)
         {
             return Ok(await _genreService.GetAllPaginatedAsync(genreParams));
@@ -36,18 +38,21 @@ namespace Relaxinema.WebAPI.Controllers
         }
         
         [HttpPost("create")]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<GenreResponse>> Create([FromBody]GenreAddRequest genreAddRequest)
         {
             return Ok(await _genreService.CreateGenreAsync(genreAddRequest));
         }
 
         [HttpPut("edit")]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<GenreResponse>> Edit([FromBody]GenreUpdateRequest genreUpdateRequest)
         {
             return Ok(await _genreService.UpdateGenreAsync(genreUpdateRequest));
         }
 
         [HttpDelete("delete/{id}")]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult> Delete([FromRoute]Guid id)
         {
             await _genreService.DeleteGenreAsync(id);

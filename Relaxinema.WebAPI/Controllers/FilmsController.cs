@@ -1,10 +1,15 @@
 ﻿using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Mvc;
+using Org.BouncyCastle.Asn1.X509.Qualified;
 using Relaxinema.Core.DTO.Film;
 using Relaxinema.Core.Helpers;
 using Relaxinema.Core.Helpers.RepositoryParams;
 using Relaxinema.Core.ServiceContracts;
+using Relaxinema.WebAPI.Attributes;
 using Relaxinema.WebAPI.Controllers.Base;
+using System.Text.Json;
+using Microsoft.AspNetCore.Authorization;
+
 
 namespace Relaxinema.WebAPI.Controllers
 {
@@ -24,8 +29,33 @@ namespace Relaxinema.WebAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<PagedList<FilmResponse>>> GetAllFilms([FromHeader]FilmParams filmParams)
+        public async Task<ActionResult<PagedList<FilmResponse>>> GetAllFilms([FromHeader]PaginatedParams paginatedParams, [FromHeader]FilterParams? filterParams = null, [FromHeader]OrderByParams? orderByParams = null)
         {
+            var filmParams = new FilmParams()
+            {
+                PageNumber = paginatedParams.PageNumber,
+                FilterParams = filterParams,
+                OrderByParams = orderByParams,
+                PageSize = paginatedParams.PageSize,
+                ShowHiddens = false
+            };
+            
+            return Ok(await _filmService.GetAllAsync(filmParams));
+        }
+        
+        [HttpGet("all")]
+        [Authorize(Roles = "admin")]
+        public async Task<ActionResult<PagedList<FilmResponse>>> GetAllFilmsInDb([FromHeader]PaginatedParams paginatedParams, [FromHeader]FilterParams? filterParams = null, [FromHeader]OrderByParams? orderByParams = null, [FromQuery]bool showHiddens = false)
+        {
+            var filmParams = new FilmParams()
+            {
+                PageNumber = paginatedParams.PageNumber,
+                FilterParams = filterParams,
+                OrderByParams = orderByParams,
+                PageSize = paginatedParams.PageSize,
+                ShowHiddens = showHiddens
+            };
+            
             return Ok(await _filmService.GetAllAsync(filmParams));
         }
         
@@ -48,12 +78,14 @@ namespace Relaxinema.WebAPI.Controllers
         }
 
         [HttpPut("edit")]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult<FilmResponse>> UpdateFilm([FromForm]FilmUpdateRequest filmUpdateRequest)
         {
             return Ok(await _filmService.UpdateFilmAsync(filmUpdateRequest));
         }
 
         [HttpDelete("delete/{id}")]
+        [Authorize(Roles = "admin")]
         public async Task<ActionResult> Delete([FromRoute]Guid id)
         {
             await _filmService.DeleteAsync(id);

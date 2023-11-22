@@ -5,10 +5,10 @@ namespace Relaxinema.Core.DTO.Comment;
 public class CommentUpdateRequest
 {
     [Required]
-    public Guid? Id { get; set; }
-    
+    public Guid? Id { get; set; } = null!;
+
     [Required]
     [MinLength(1)]
     [MaxLength(150)]
-    public string Text { get; set; }
+    public string Text { get; set; } = null!;
 }

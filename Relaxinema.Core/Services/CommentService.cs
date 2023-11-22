@@ -2,6 +2,7 @@
 using Relaxinema.Core.Domain.Entities;
 using Relaxinema.Core.Domain.RepositoryContracts;
 using Relaxinema.Core.DTO.Comment;
+using Relaxinema.Core.Exceptions;
 using Relaxinema.Core.Helpers;
 using Relaxinema.Core.Helpers.RepositoryParams;
 using Relaxinema.Core.ServiceContracts;
@@ -62,11 +63,11 @@ public class CommentService : ICommentService
         return _mapper.Map<CommentResponse>(comment);
     }
 
-    public async Task<CommentResponse> UpdateCommentAsync(CommentUpdateRequest commentUpdateRequest, Guid userId)
+    public async Task<CommentResponse> UpdateCommentAsync(CommentUpdateRequest commentUpdateRequest, Guid userId, bool admin)
     {
         var comment = _mapper.Map<Comment>(commentUpdateRequest);
 
-        comment.UserId = userId;
+        await ValidateAccess(commentUpdateRequest.Id.Value, userId, admin);
 
         var response = await _commentRepository.UpdateAsync(comment);
 
@@ -76,10 +77,22 @@ public class CommentService : ICommentService
         return _mapper.Map<CommentResponse>(response);
     }
 
-    public async Task DeleteAsync(Guid id)
+    public async Task DeleteAsync(Guid id, Guid userId, bool admin)
     {
+        await ValidateAccess(id, userId, admin);
+        
         if (!await _commentRepository.DeleteAsync(id))
             throw new KeyNotFoundException("Cannot find comment with such ");
+    }
+
+    private async Task ValidateAccess(Guid commentId,Guid userId, bool admin)
+    {
+        if (!admin)
+        {
+            var original = await _commentRepository.GetByIdAsync(commentId);
+            if(original is not null && original.UserId != userId)
+                throw new AuthorizationException("You cannot modify others' comments");
+        }
     }
     
     private async Task<User> GetUser(Guid userId)

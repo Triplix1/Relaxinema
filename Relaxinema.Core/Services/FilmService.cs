@@ -77,7 +77,16 @@ namespace Relaxinema.Core.Services
 
         public async Task<PagedList<FilmCardResponse>> GetAllAsync(FilmParams filmParams)
         {
-            var pagedList = await _filmRepository.GetAllAsync(filmParams, new[] { nameof(Film.Genres) });
+            var stringsToInclude = new List<string>();
+            stringsToInclude.Add(nameof(Film.Genres));
+            
+            
+            if (filmParams.OrderByParams?.OrderBy is not null && filmParams.OrderByParams.OrderBy == "Рейтинг")
+            {
+                stringsToInclude.Add(nameof(Film.Ratings));
+            }
+            
+            var pagedList = await _filmRepository.GetAllAsync(filmParams, stringsToInclude.ToArray());
 
             return new PagedList<FilmCardResponse>(
                 _mapper.Map<IEnumerable<FilmCardResponse>>(pagedList.Items), 

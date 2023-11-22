@@ -1,10 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Relaxinema.Core.Extentions;
 using Relaxinema.Core.Helpers;
 using Relaxinema.Core.MailConfig;
 using Relaxinema.Core.ServiceContracts;
 using Relaxinema.Core.Services;
 using Relaxinema.Infrastructure;
+using Relaxinema.Infrastructure.DatabaseContext;
+using Relaxinema.Infrastructure.Seed;
 using Relaxinema.WebAPI.Filters;
 using Relaxinema.WebAPI.Middlewares;
 
@@ -12,7 +15,7 @@ namespace Relaxinema.WebAPI
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +25,7 @@ namespace Relaxinema.WebAPI
             builder.Services.AddControllers(options =>
             {
                 options.Filters.Add(new ValidateModelsFilterAttribute());
+                options.Filters.Add(new JsonQueryFilter());
             });
             
             builder.Services.AddCore(builder.Configuration);
@@ -33,7 +37,7 @@ namespace Relaxinema.WebAPI
             builder.Services.AddSwaggerGen();
 
             var app = builder.Build();
-
+            
             app.UseCors(builder => builder
                 .AllowAnyHeader()
                 .AllowAnyMethod()
@@ -50,6 +54,21 @@ namespace Relaxinema.WebAPI
             app.UseAuthorization();
 
             app.MapControllers();
+            
+            using var scope = app.Services.CreateScope();
+            var services  = scope.ServiceProvider;
+            try
+            {
+                var context = services.GetRequiredService<ApplicationDbContext>();
+                var rolesService = services.GetRequiredService<IRoleService>();
+                await context.Database.MigrateAsync();
+                await Seed.SeedUsers(context, rolesService);
+            }
+            catch (Exception ex)
+            {
+                var logger = services.GetService<ILogger<Program>>();
+                logger.LogError(ex, "An error occured during migration");
+            }
 
             app.Run();
         }

@@ -39,14 +39,18 @@ public class CommentsController : BaseController
     [HttpPut("edit")]
     public async Task<ActionResult<CommentResponse>> UpdateComment([FromBody]CommentUpdateRequest commentUpdateRequest)
     {
+        var admin = User.IsAdmin();
         var userId = User.GetUserId();
-        return Ok(await _commentService.UpdateCommentAsync(commentUpdateRequest, userId));
+        return Ok(await _commentService.UpdateCommentAsync(commentUpdateRequest, userId, admin));
     }
 
+    [Authorize]
     [HttpDelete("delete/{id}")]
     public async Task<ActionResult> Delete([FromRoute]Guid id)
     {
-        await _commentService.DeleteAsync(id);
+        var admin = User.IsAdmin();
+        var userId = User.GetUserId();
+        await _commentService.DeleteAsync(id, userId, admin);
         return Ok();
     }
 }

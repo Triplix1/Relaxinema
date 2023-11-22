@@ -14,10 +14,12 @@ namespace Relaxinema.Infrastructure.Repositories
     {
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
-        public FilmRepository(ApplicationDbContext context, IMapper mapper)
+        private readonly IRatingRepository _ratingRepository;
+        public FilmRepository(ApplicationDbContext context, IMapper mapper, IRatingRepository ratingRepository)
         {
             _context = context;
             _mapper = mapper;
+            _ratingRepository = ratingRepository;
         }
         public async Task CreateAsync(Film entity)
         {
@@ -96,30 +98,39 @@ namespace Relaxinema.Infrastructure.Repositories
         {
             var query = _context.Films.AsQueryable();
 
-            query = IncludeParamsHelper<Film>.IncludeStrings(includeStrings, query);                
+            query = IncludeParamsHelper<Film>.IncludeStrings(includeStrings, query);  
+            
+            if(filmParams.FilterParams is null)
+                return await PagedList<Film>.CreateAsync(query, filmParams.PageNumber, filmParams.PageSize);
 
-            if (filmParams.Year is not null)
-                query = query.Where(f => f.Year == filmParams.Year);
+            if (filmParams.FilterParams.Year is not null)
+                query = query.Where(f => f.Year == filmParams.FilterParams.Year);
 
-            if(filmParams.Genre is not null)
-                query = query.Where(f => f.Genres.Any(g => g.Name == filmParams.Genre));
+            if(filmParams.FilterParams.Genre is not null)
+                query = query.Where(f => f.Genres.Any(g => g.Name == filmParams.FilterParams.Genre));
 
-            if(filmParams.OrderByParams is not null)
+            if (filmParams.FilterParams.Expected is not null)
+                query = query.Where(f => f.IsExpected == filmParams.FilterParams.Expected);
+
+            if (!filmParams.ShowHiddens)
+                query = query.Where(f => f.Publish);
+
+            if(filmParams.OrderByParams is not null && filmParams.OrderByParams.OrderBy is not null && filmParams.OrderByParams.Asc is not null)
             {
                 var currentOrderBy = filmParams.OrderByParams;
 
-                if (currentOrderBy.Asc)
+                if (currentOrderBy.Asc.Value)
                 {
                     switch (currentOrderBy.OrderBy)
                     {
-                        case "Year":
-                            query = query.OrderBy(f => f.Year);
+                        case "Рік":
+                            query = query.OrderBy(f => f.Year ?? short.MaxValue);
                             break;
-                        case "Name":
+                        case "Назва":
                             query = query.OrderBy(f => f.Name);
                             break;
-                        default:
-                            query = query.OrderBy(f => f.Name);
+                        case "Рейтинг":
+                            query = query.OrderBy(f => f.Ratings.Count == 0 ? 0 : f.Ratings.Sum(r => r.Rate) / f.Ratings.Count);
                             break;
                     }
                 }
@@ -127,17 +138,19 @@ namespace Relaxinema.Infrastructure.Repositories
                 {
                     switch (currentOrderBy.OrderBy)
                     {
-                        case "Year":
-                            query = query.OrderByDescending(f => f.Year);
+                        case "Рік":
+                            query = query.OrderByDescending(f => f.Year ?? short.MaxValue);
                             break;
-                        case "Name":
+                        case "Назва":
                             query = query.OrderByDescending(f => f.Name);
                             break;
-                        default:
-                            query = query.OrderByDescending(f => f.Name);
+                        case "Рейтинг":
+                            query = query.OrderByDescending(f => f.Ratings.Count == 0 ? 0 : f.Ratings.Sum(r => r.Rate) / f.Ratings.Count);
                             break;
                     }
                 }
+                
+                
             }
 
             return await PagedList<Film>.CreateAsync(query, filmParams.PageNumber, filmParams.PageSize);
