@@ -8,9 +8,8 @@ using System.Threading.Tasks;
 
 namespace Relaxinema.Core.Helpers.RepositoryParams
 {
-    public class UserParams
+    public class UserParams : PaginatedParams
     {
-        public string[]? IncludeProperties { get; set; }
-        public Expression<Func<User, bool>>? Filter { get; set; }
+        public bool? Admins { get; set; }
     }
 }

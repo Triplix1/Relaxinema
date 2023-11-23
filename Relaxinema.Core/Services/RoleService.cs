@@ -20,7 +20,7 @@ namespace Relaxinema.Core.Services
         }
         public async Task AddToRoleAsync(Guid userId, string roleName)
         {
-            var user = await _userRepository.GetByIdAsync(userId,new UserParams() { IncludeProperties = new [] { nameof(User.Roles) } });
+            var user = await _userRepository.GetByIdAsync(userId, new [] { nameof(User.Roles) });
 
             if(user == null) 
                 throw new KeyNotFoundException("Doesn't contains user with such id");

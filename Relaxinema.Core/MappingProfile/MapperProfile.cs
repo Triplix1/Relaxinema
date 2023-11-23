@@ -20,7 +20,7 @@ namespace Relaxinema.Core.MappingProfile
         public MapperProfile()
         {
             CreateMap<User, User>();
-            CreateMap<UserDto,User>().ReverseMap();
+            CreateMap<UserResponse,User>().ReverseMap();
             CreateMap<RegisterDto, User>().ReverseMap();
             CreateMap<LoginDto,  User>().ReverseMap();
 

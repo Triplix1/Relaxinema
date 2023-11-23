@@ -10,6 +10,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using Relaxinema.Core.Helpers.RepositoryParams;
 
 namespace Relaxinema.Core.Services
 {
@@ -32,31 +33,45 @@ namespace Relaxinema.Core.Services
                 throw new KeyNotFoundException();
         }
 
-        public async Task<IEnumerable<UserDto>> GetAllAsync()
+        public async Task<PagedList<UserResponse>> GetAllAsync(PaginatedParams pagination, bool? admins)
         {
-            return _mapper.Map<IEnumerable<UserDto>>(await _userRepository.GetAllAsync());
+            UserParams? userParams = null;
+
+            if (admins is not null)
+            {
+                userParams = new UserParams()
+                {
+                    PageNumber = pagination.PageNumber,
+                    PageSize = pagination.PageSize,
+                    Admins = admins
+                };
+            }
+
+            var result = await _userRepository.GetAllAsync(userParams, new[] { nameof(User.Roles) });
+            
+            return new PagedList<UserResponse>(_mapper.Map<IEnumerable<UserResponse>>(result.Items), result.TotalCount, result.CurrentPage, result.PageSize);
         }
 
-        public async Task<UserDto?> GetByEmailAsync(string email)
+        public async Task<UserResponse?> GetByEmailAsync(string email)
         {
-            return _mapper.Map<UserDto>(await _userRepository.GetByEmailAsync(email));
+            return _mapper.Map<UserResponse>(await _userRepository.GetByEmailAsync(email));
         }
 
-        public async Task<UserDto?> GetByIdAsync(Guid id)
+        public async Task<UserResponse?> GetByIdAsync(Guid id)
         {
             var user = await _userRepository.GetByIdAsync(id);
 
-            return _mapper.Map<UserDto>(user);
+            return _mapper.Map<UserResponse>(user);
         }
 
-        public async Task<UserDto?> GetByNicknameAsync(string nickname)
+        public async Task<UserResponse?> GetByNicknameAsync(string nickname)
         {
             var user = await _userRepository.GetByNicknameAsync(nickname);
 
             if (user == null)
                 throw new KeyNotFoundException();
 
-            return _mapper.Map<UserDto>(user);
+            return _mapper.Map<UserResponse>(user);
         }
 
         public async Task<IEnumerable<string>> GetSubscribedEmailsByFilm(Guid filmId)

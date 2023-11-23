@@ -28,7 +28,7 @@ namespace Relaxinema.Core.Services
         }
         public async Task<AuthorizationResponse> LoginAsync(LoginDto loginDto)
         {
-            var user = await _userRepository.GetByEmailAsync(loginDto.Email, new UserParams() { IncludeProperties = new[] { nameof(User.Roles) } });
+            var user = await _userRepository.GetByEmailAsync(loginDto.Email, new[] { nameof(User.Roles) });
 
             if (user == null) throw new AuthorizationException("Invalid Username");
 

@@ -38,45 +38,24 @@ namespace Relaxinema.Infrastructure.Repositories
             return await _context.SaveChangesAsync() > 0;
         }
 
-        public async Task<IEnumerable<User>> GetAllAsync(UserParams? userParams = null)
+        public async Task<PagedList<User>> GetAllAsync(UserParams userParams, string[]? includeProperties)
         {
-            var query = ApplyParams(userParams);
-
-            return await query.ToListAsync();
+            return await ApplyParams(userParams, includeProperties);
         }
 
-        public async Task<User?> GetByNicknameAsync(string nickname, UserParams? userParams = null)
+        public async Task<User?> GetByNicknameAsync(string nickname, string[]? includeProperties)
         {
-            var query = ApplyParams(userParams);
-
-            return await query.FirstOrDefaultAsync(u => u.Nickname == nickname);
+            return await _context.Users.FirstOrDefaultAsync(u => u.Nickname == nickname);
         }
 
-        public async Task<User?> GetByIdAsync(Guid id, UserParams? userParams = null)
+        public async Task<User?> GetByIdAsync(Guid id, string[]? includeProperties)
         {
-            var query = ApplyParams(userParams);
-
-            return await query.FirstOrDefaultAsync(x => x.Id == id);
+            return await _context.Users.FirstOrDefaultAsync(x => x.Id == id);
         }
 
-        public async Task<User?> UpdateAsync(User entity)
+        public async Task<User?> GetByEmailAsync(string email, string[]? includeProperties)
         {
-            var user = await _context.Users.FindAsync(entity.Id);
-
-            if (user == null)
-                return null;
-
-            _mapper.Map(entity, user);
-
-            await _context.SaveChangesAsync();
-
-            return user;
-        }
-
-        public async Task<User?> GetByEmailAsync(string email, UserParams? userParams = null)
-        {
-            var query = ApplyParams(userParams);
-            return await query.FirstOrDefaultAsync(u => u.Email == email);
+            return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
         }
 
         public async Task<IEnumerable<string>?> GetEmailsByFilmAsync(Guid filmId)
@@ -89,23 +68,20 @@ namespace Relaxinema.Infrastructure.Repositories
             return film.SubscribedUsers.Select(u => u.Email);
         }
 
-        private IQueryable<User> ApplyParams(UserParams? userParams)
+        private async Task<PagedList<User>> ApplyParams(UserParams userParams, string[]? includeProperties)
         {
             var query = _context.Users.AsQueryable();
 
-            if (userParams == null)
-                return query;
-
-            if (userParams.IncludeProperties != null)
+            if (includeProperties is not null)
             {
-                foreach (var property in userParams.IncludeProperties)
+                foreach (var property in includeProperties)
                     query = query.Include(property);
             }
 
-            if (userParams.Filter != null)
-                query = query.Where(userParams.Filter);
+            if (userParams.Admins.HasValue && userParams.Admins.Value)
+                query = query.Where(u => u.Roles.Any(r => r.Name == "admin"));
 
-            return query;
+            return await PagedList<User>.CreateAsync(query, userParams.PageNumber, userParams.PageSize);
         }
     }
 }

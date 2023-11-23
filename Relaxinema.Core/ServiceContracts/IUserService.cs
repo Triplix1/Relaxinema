@@ -5,15 +5,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Relaxinema.Core.Helpers;
+using Relaxinema.Core.Helpers.RepositoryParams;
 
 namespace Relaxinema.Core.ServiceContracts
 {
     public interface IUserService
     {
-        Task<UserDto?> GetByIdAsync(Guid id);
-        Task<UserDto?> GetByNicknameAsync(string nickname);
-        Task<UserDto?> GetByEmailAsync(string email);
-        Task<IEnumerable<UserDto>> GetAllAsync();
+        Task<UserResponse?> GetByIdAsync(Guid id);
+        Task<UserResponse?> GetByNicknameAsync(string nickname);
+        Task<UserResponse?> GetByEmailAsync(string email);
+        Task<PagedList<UserResponse>> GetAllAsync(PaginatedParams pagination,bool? admins);
         Task DeleteAsync(Guid id);
         Task<IEnumerable<string>> GetSubscribedEmailsByFilm(Guid filmId);
     }
