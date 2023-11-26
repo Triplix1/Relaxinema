@@ -9,7 +9,7 @@ namespace Relaxinema.Core.ServiceContracts
 {
     public interface IAuthorizationService
     {
-        Task<AuthorizationResponse> RegisterUserAsync(RegisterDto registerDto);
+        Task<AuthorizationResponse> RegisterUserAsync(RegisterDto registerDto, string[] roles);
         Task<AuthorizationResponse> LoginAsync(LoginDto loginDto);
     }
 }

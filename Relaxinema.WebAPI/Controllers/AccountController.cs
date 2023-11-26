@@ -1,8 +1,9 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Relaxinema.Core.DTO.Authorization;
-using Relaxinema.Core.ServiceContracts;
 using Relaxinema.WebAPI.Controllers.Base;
+using IAuthorizationService = Relaxinema.Core.ServiceContracts.IAuthorizationService;
 
 namespace Relaxinema.WebAPI.Controllers
 {
@@ -17,7 +18,14 @@ namespace Relaxinema.WebAPI.Controllers
         [HttpPost("register")]
         public async Task<ActionResult<AuthorizationResponse>> Register(RegisterDto registerDto)
         {
-            return Ok(await _authorizationService.RegisterUserAsync(registerDto));
+            return Ok(await _authorizationService.RegisterUserAsync(registerDto, new [] {"User"}));
+        }
+        
+        [HttpPost("register-admin")]
+        [Authorize(Roles = "admin")]
+        public async Task<ActionResult<AuthorizationResponse>> RegisterAdmin(RegisterDto registerDto)
+        {
+            return Ok(await _authorizationService.RegisterUserAsync(registerDto, new [] {"admin"}));
         }
 
         [HttpPost("login")]

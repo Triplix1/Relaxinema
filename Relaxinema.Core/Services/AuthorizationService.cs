@@ -48,7 +48,7 @@ namespace Relaxinema.Core.Services
             };
         }
 
-        public async Task<AuthorizationResponse> RegisterUserAsync(RegisterDto registerDto)
+        public async Task<AuthorizationResponse> RegisterUserAsync(RegisterDto registerDto, string[] roles)
         {
             var userWithSameNickname = await _userRepository.GetByNicknameAsync(registerDto.Nickname);
 
@@ -73,7 +73,10 @@ namespace Relaxinema.Core.Services
             user.PasswordSalt = hmac.Key;
             await _userRepository.CreateAsync(user);
 
-            await _roleService.AddToRoleAsync(user.Id, "User");   
+            foreach (var role in roles)
+            {
+                await _roleService.AddToRoleAsync(user.Id, role);
+            }
 
             return new AuthorizationResponse
             {
