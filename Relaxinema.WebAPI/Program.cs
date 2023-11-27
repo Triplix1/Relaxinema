@@ -1,10 +1,8 @@
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Relaxinema.Core.Extentions;
 using Relaxinema.Core.Helpers;
 using Relaxinema.Core.MailConfig;
 using Relaxinema.Core.ServiceContracts;
-using Relaxinema.Core.Services;
 using Relaxinema.Infrastructure;
 using Relaxinema.Infrastructure.DatabaseContext;
 using Relaxinema.Infrastructure.Seed;
@@ -25,7 +23,6 @@ namespace Relaxinema.WebAPI
             builder.Services.AddControllers(options =>
             {
                 options.Filters.Add(new ValidateModelsFilterAttribute());
-                options.Filters.Add(new JsonQueryFilter());
             });
             
             builder.Services.AddCore(builder.Configuration);
@@ -37,6 +34,8 @@ namespace Relaxinema.WebAPI
             builder.Services.AddSwaggerGen();
 
             var app = builder.Build();
+            
+            app.UseMiddleware<ExceptionMiddleware>();
             
             app.UseCors(builder => builder
                 .AllowAnyHeader()
