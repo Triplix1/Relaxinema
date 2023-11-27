@@ -6,6 +6,7 @@ using Relaxinema.Core.Helpers;
 using Relaxinema.Core.Helpers.RepositoryParams;
 using Relaxinema.Infrastructure.DatabaseContext;
 using System.Linq.Expressions;
+using Relaxinema.Infrastructure.RepositoryHelpers;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Relaxinema.Infrastructure.Repositories
@@ -45,43 +46,47 @@ namespace Relaxinema.Infrastructure.Repositories
 
         public async Task<User?> GetByNicknameAsync(string nickname, string[]? includeProperties)
         {
-            return await _context.Users.FirstOrDefaultAsync(u => u.Nickname == nickname);
+            var query = IncludeProps(_context.Users.AsQueryable(), includeProperties);
+            return await query.FirstOrDefaultAsync(u => u.Nickname == nickname);
         }
 
         public async Task<User?> GetByIdAsync(Guid id, string[]? includeProperties)
         {
-            return await _context.Users.FirstOrDefaultAsync(x => x.Id == id);
+            var query = IncludeProps(_context.Users.AsQueryable(), includeProperties);
+            return await query.FirstOrDefaultAsync(x => x.Id == id);
         }
 
         public async Task<User?> GetByEmailAsync(string email, string[]? includeProperties)
         {
-            return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+            var query = IncludeProps(_context.Users.AsQueryable(), includeProperties);
+            return await query.FirstOrDefaultAsync(u => u.Email == email);
         }
 
         public async Task<IEnumerable<string>?> GetEmailsByFilmAsync(Guid filmId)
         {
             var film = await _context.Films.Include(f => f.SubscribedUsers).FirstOrDefaultAsync(f => f.Id == filmId);
 
-            if (film == null)
-                return null;
-
-            return film.SubscribedUsers.Select(u => u.Email);
+            return film?.SubscribedUsers.Select(u => u.Email);
         }
 
         private async Task<PagedList<User>> ApplyParams(UserParams userParams, string[]? includeProperties)
         {
             var query = _context.Users.AsQueryable();
 
-            if (includeProperties is not null)
-            {
-                foreach (var property in includeProperties)
-                    query = query.Include(property);
-            }
+            query = IncludeProps(query, includeProperties);
 
             if (userParams.Admins.HasValue && userParams.Admins.Value)
                 query = query.Where(u => u.Roles.Any(r => r.Name == "admin"));
 
             return await PagedList<User>.CreateAsync(query, userParams.PageNumber, userParams.PageSize);
+        }
+
+        private IQueryable<User> IncludeProps(IQueryable<User> query, string[]? includeStrings)
+        {
+            if(includeStrings is not null)
+                query = IncludeParamsHelper<User>.IncludeStrings(includeStrings, query);
+
+            return query;
         }
     }
 }

@@ -80,7 +80,6 @@ namespace Relaxinema.Core.Services
             var stringsToInclude = new List<string>();
             stringsToInclude.Add(nameof(Film.Genres));
             
-            
             if (filmParams.OrderByParams?.OrderBy is not null && filmParams.OrderByParams.OrderBy == "Рейтинг")
             {
                 stringsToInclude.Add(nameof(Film.Ratings));

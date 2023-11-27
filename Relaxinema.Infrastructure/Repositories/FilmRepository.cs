@@ -1,5 +1,4 @@
-﻿using System.Net;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Relaxinema.Core.Domain.Entities;
 using Relaxinema.Core.Domain.RepositoryContracts;
@@ -103,6 +102,9 @@ namespace Relaxinema.Infrastructure.Repositories
             if(filmParams.FilterParams is null)
                 return await PagedList<Film>.CreateAsync(query, filmParams.PageNumber, filmParams.PageSize);
 
+            if (filmParams.Search is not null)
+                query = query.Where(f => f.Name.ToLower().Contains(filmParams.Search.ToLower()));
+
             if (filmParams.FilterParams.Year is not null)
                 query = query.Where(f => f.Year == filmParams.FilterParams.Year);
 
@@ -115,7 +117,7 @@ namespace Relaxinema.Infrastructure.Repositories
             if (!filmParams.ShowHiddens)
                 query = query.Where(f => f.Publish);
 
-            if(filmParams.OrderByParams is not null && filmParams.OrderByParams.OrderBy is not null && filmParams.OrderByParams.Asc is not null)
+            if(filmParams.OrderByParams is { OrderBy: not null, Asc: not null })
             {
                 var currentOrderBy = filmParams.OrderByParams;
 
@@ -149,8 +151,6 @@ namespace Relaxinema.Infrastructure.Repositories
                             break;
                     }
                 }
-                
-                
             }
 
             return await PagedList<Film>.CreateAsync(query, filmParams.PageNumber, filmParams.PageSize);

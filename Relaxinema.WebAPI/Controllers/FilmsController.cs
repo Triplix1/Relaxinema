@@ -29,7 +29,7 @@ namespace Relaxinema.WebAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<PagedList<FilmResponse>>> GetAllFilms([FromHeader]PaginatedParams paginatedParams, [FromHeader]FilterParams? filterParams = null, [FromHeader]OrderByParams? orderByParams = null)
+        public async Task<ActionResult<PagedList<FilmResponse>>> GetAllFilms([FromHeader]PaginatedParams paginatedParams, [FromHeader]FilterParams? filterParams = null, [FromHeader]OrderByParams? orderByParams = null, [FromQuery] string? search = null)
         {
             var filmParams = new FilmParams()
             {
@@ -37,7 +37,8 @@ namespace Relaxinema.WebAPI.Controllers
                 FilterParams = filterParams,
                 OrderByParams = orderByParams,
                 PageSize = paginatedParams.PageSize,
-                ShowHiddens = false
+                ShowHiddens = false,
+                Search = search
             };
             
             return Ok(await _filmService.GetAllAsync(filmParams));
@@ -45,7 +46,7 @@ namespace Relaxinema.WebAPI.Controllers
         
         [HttpGet("all")]
         [Authorize(Roles = "admin")]
-        public async Task<ActionResult<PagedList<FilmResponse>>> GetAllFilmsInDb([FromHeader]PaginatedParams paginatedParams, [FromHeader]FilterParams? filterParams = null, [FromHeader]OrderByParams? orderByParams = null, [FromQuery]bool showHiddens = false)
+        public async Task<ActionResult<PagedList<FilmResponse>>> GetAllFilmsInDb([FromHeader]PaginatedParams paginatedParams, [FromHeader]FilterParams? filterParams = null, [FromHeader]OrderByParams? orderByParams = null, [FromQuery]bool showHiddens = false, [FromQuery]string? search = null)
         {
             var filmParams = new FilmParams()
             {
@@ -53,7 +54,8 @@ namespace Relaxinema.WebAPI.Controllers
                 FilterParams = filterParams,
                 OrderByParams = orderByParams,
                 PageSize = paginatedParams.PageSize,
-                ShowHiddens = showHiddens
+                ShowHiddens = showHiddens,
+                Search = search
             };
             
             return Ok(await _filmService.GetAllAsync(filmParams));

@@ -26,6 +26,7 @@ namespace Relaxinema.Core.Services
             _mapper = mapper;
             _roleService = roleService;
         }
+        
         public async Task<AuthorizationResponse> LoginAsync(LoginDto loginDto)
         {
             var user = await _userRepository.GetByEmailAsync(loginDto.Email, new[] { nameof(User.Roles) });
@@ -36,9 +37,9 @@ namespace Relaxinema.Core.Services
 
             var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(loginDto.Password));
 
-            for (int i = 0; i < computedHash.Length; i++)
+            if (computedHash.Where((t, i) => t != user.PasswordHash[i]).Any())
             {
-                if (computedHash[i] != user.PasswordHash[i]) throw new AuthorizationException("Invalid Password");
+                throw new AuthorizationException("Invalid Password");
             }
 
             return new AuthorizationResponse
