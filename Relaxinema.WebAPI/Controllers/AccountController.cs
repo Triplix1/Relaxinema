@@ -33,5 +33,11 @@ namespace Relaxinema.WebAPI.Controllers
         {
             return Ok(await _authorizationService.LoginAsync(loginDto));
         }
+        
+        [HttpPost("external-login")]
+        public async Task<IActionResult> ExternalLogin([FromBody]ExternalAuthDto externalAuth)
+        {
+            return Ok(await _authorizationService.ExternalLogin(externalAuth));
+        }
     }
 }

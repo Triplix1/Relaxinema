@@ -25,6 +25,7 @@ namespace Relaxinema.Core.Extentions
             services.AddScoped<IPhotoService, PhotoService>();
             services.AddTransient<IMailService, MailService>();
             services.AddScoped<ISubscriptionService, SubscriptionService>();
+            services.AddTransient<JwtHelper>();
             
             return services;
         }

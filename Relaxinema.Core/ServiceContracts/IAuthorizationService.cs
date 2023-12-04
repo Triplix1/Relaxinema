@@ -11,5 +11,6 @@ namespace Relaxinema.Core.ServiceContracts
     {
         Task<AuthorizationResponse> RegisterUserAsync(RegisterDto registerDto, string[] roles);
         Task<AuthorizationResponse> LoginAsync(LoginDto loginDto);
+        Task<AuthorizationResponse> ExternalLogin(ExternalAuthDto externalAuth);
     }
 }

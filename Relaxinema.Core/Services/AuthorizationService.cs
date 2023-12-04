@@ -18,13 +18,15 @@ namespace Relaxinema.Core.Services
         private readonly IRoleService _roleService;
         private readonly IMapper _mapper;
         private readonly ITokenService _tokenService;
+        private readonly JwtHelper _jwtHelper;
 
-        public AuthorizationService(IUserRepository userRepository, ITokenService tokenService, IMapper mapper, IRoleService roleService)
+        public AuthorizationService(IUserRepository userRepository, ITokenService tokenService, IMapper mapper, IRoleService roleService, JwtHelper jwtHelper)
         {
             _userRepository = userRepository;
             _tokenService = tokenService;
             _mapper = mapper;
             _roleService = roleService;
+            _jwtHelper = jwtHelper;
         }
         
         public async Task<AuthorizationResponse> LoginAsync(LoginDto loginDto)
@@ -84,6 +86,34 @@ namespace Relaxinema.Core.Services
                 Nickname = user.Nickname,
                 Token = _tokenService.CreateToken(user)
             };
+        }
+        
+        public async Task<AuthorizationResponse> ExternalLogin(ExternalAuthDto externalAuth)
+        {
+            var payload =  await _jwtHelper.VerifyGoogleToken(externalAuth);
+        
+            if(payload == null)
+                throw new ArgumentException("Invalid External Authentication.");
+            
+            var user = await _userRepository.GetByNicknameAsync(payload.Name);
+            if (user is null)
+            {
+                user = await _userRepository.GetByEmailAsync(payload.Email);
+                
+                if (user is null)
+                {
+                    user = new User { Email = payload.Email, Nickname = payload.Email, PhotoUrl = payload.Picture};
+                    await _userRepository.CreateAsync(user);
+
+                    await _roleService.AddToRoleAsync(user.Id, "user");
+                }
+            }
+            
+            if (user is null)
+                throw new ArgumentException("Invalid External Authentication.");
+
+            var token = _tokenService.CreateToken(user);
+            return new AuthorizationResponse() { Nickname = user.Nickname, Token = token };
         }
     }
 }
