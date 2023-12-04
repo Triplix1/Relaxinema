@@ -1,21 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Identity;
 
 namespace Relaxinema.Core.Domain.Entities
 {
-    public class User
+    public class User : IdentityUser<Guid>
     {
-        public Guid Id { get; set; }
-        public string Email { get; set; } = null!;
+        [PersonalData]
         public string Nickname { get; set; } = null!;
-        public byte[] PasswordHash { get; set; } = null!;
-        public byte[] PasswordSalt { get; set; } = null!;
-        public ICollection<Role> Roles { get; set; }
+        [PersonalData]
+        public string? PhotoUrl { get; set; }
+        [PersonalData]
+        public string? PhotoPublicId { get; set; }
         public ICollection<Film> SubscribedTo { get; set; }
         public ICollection<Comment> Comments { get; set; }
         public ICollection<Rating> Rates { get; set; }
+        public ICollection<IdentityUserRole<Guid>> Roles { get; set; }
     }
 }

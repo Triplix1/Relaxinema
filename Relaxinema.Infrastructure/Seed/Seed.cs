@@ -1,6 +1,8 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using System.Threading.Channels;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Relaxinema.Core.Domain.Entities;
 using Relaxinema.Core.Domain.RepositoryContracts;
@@ -9,11 +11,21 @@ using Relaxinema.Infrastructure.DatabaseContext;
 
 namespace Relaxinema.Infrastructure.Seed;
 
-public static class Seed
+public class Seed
 {
-    public static async Task SeedUsers(ApplicationDbContext context, IRoleService roleService)
+
+    private readonly UserManager<User> _userManager;
+    private readonly RoleManager<IdentityRole<Guid>> _roleManager;
+
+    public Seed(UserManager<User> userManager, RoleManager<IdentityRole<Guid>> roleManager)
     {
-        if (await context.Users.AnyAsync()) return;
+        _userManager = userManager;
+        _roleManager = roleManager;
+    }
+
+    public async Task SeedUsersAsync()
+    {
+        if (await _userManager.Users.AnyAsync()) return;
 
         var userData = await File.ReadAllTextAsync("D:\\Study\\Relaxinema\\Relaxinema.Infrastructure\\Seed\\UserSeedData.json");
 
@@ -23,16 +35,15 @@ public static class Seed
 
         foreach (var user in users)
         {
-            using var hmac = new HMACSHA512();
+            user.UserName = user.Nickname;
+            var result = await _userManager.CreateAsync(user, "example");
+            await _roleManager.CreateAsync(new IdentityRole<Guid>("admin"));
             
-            user.Nickname = user.Nickname.ToLower();
-            user.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes("example"));
-            user.PasswordSalt = hmac.Key;
-
-            context.Users.Add(user);
-            await context.SaveChangesAsync();
-            await roleService.AddToRoleAsync(user.Id, "admin");
-            await context.SaveChangesAsync();
+            if(result.Succeeded)
+            {
+                 var roleResult = await _userManager.AddToRoleAsync(user, UserRole.Admin.ToString().ToLower());
+                 if(roleResult.Succeeded) Console.Write(" ");
+            }
         }
     }
 }

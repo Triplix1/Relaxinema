@@ -17,7 +17,7 @@ namespace Relaxinema.Core.Extentions
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IAuthorizationService, AuthorizationService>();
-            services.AddScoped<IRoleService, RoleService>();
+            //services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<IFilmService, FilmService>();
             services.AddScoped<IGenreService, GenreService>();
             services.AddScoped<IRatingService, RatingService>();
@@ -25,6 +25,7 @@ namespace Relaxinema.Core.Extentions
             services.AddScoped<IPhotoService, PhotoService>();
             services.AddTransient<IMailService, MailService>();
             services.AddScoped<ISubscriptionService, SubscriptionService>();
+            services.AddScoped<JwtHelper>();
             
             return services;
         }

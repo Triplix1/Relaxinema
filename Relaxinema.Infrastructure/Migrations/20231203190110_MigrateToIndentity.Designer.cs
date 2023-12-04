@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Relaxinema.Infrastructure.DatabaseContext;
 
@@ -11,9 +12,11 @@ using Relaxinema.Infrastructure.DatabaseContext;
 namespace Relaxinema.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231203190110_MigrateToIndentity")]
+    partial class MigrateToIndentity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -337,12 +340,6 @@ namespace Relaxinema.Infrastructure.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<string>("PhotoPublicId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PhotoUrl")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
@@ -402,7 +399,7 @@ namespace Relaxinema.Infrastructure.Migrations
                         .IsRequired();
 
                     b.HasOne("Relaxinema.Core.Domain.Entities.User", null)
-                        .WithMany("Roles")
+                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -501,8 +498,6 @@ namespace Relaxinema.Infrastructure.Migrations
                     b.Navigation("Comments");
 
                     b.Navigation("Rates");
-
-                    b.Navigation("Roles");
                 });
 #pragma warning restore 612, 618
         }

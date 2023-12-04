@@ -4,5 +4,5 @@ namespace Relaxinema.Core.ServiceContracts;
 
 public interface ITokenService
 {
-    string CreateToken(User user);
+    Task<string> CreateTokenAsync(User user);
 }

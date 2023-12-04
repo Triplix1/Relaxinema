@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Relaxinema.Core.Domain.Entities;
 using Relaxinema.Core.Domain.RepositoryContracts;
 using Relaxinema.Core.DTO.Comment;
@@ -13,15 +15,15 @@ public class CommentService : ICommentService
 {
     private readonly ICommentRepository _commentRepository;
     private readonly IFilmRepository _filmRepository;
-    private readonly IUserRepository _userRepository;
+    private readonly UserManager<User> _userManager;
     private readonly IMapper _mapper;
 
-    public CommentService(ICommentRepository commentRepository, IFilmRepository filmRepository, IUserRepository userRepository,  IMapper mapper)
+    public CommentService(ICommentRepository commentRepository, IFilmRepository filmRepository, UserManager<User> userManager,  IMapper mapper)
     {
         _commentRepository = commentRepository;
         _mapper = mapper;
         _filmRepository = filmRepository;
-        _userRepository = userRepository;
+        _userManager = userManager;
     }
 
     public async Task<CommentResponse> GetByIdAsync(Guid id)
@@ -97,7 +99,7 @@ public class CommentService : ICommentService
     
     private async Task<User> GetUser(Guid userId)
     {
-        var user = await _userRepository.GetByIdAsync(userId);
+        var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == userId);
         
         if (user is null)
             throw new KeyNotFoundException("Cannot find user with such id");

@@ -6,6 +6,8 @@ using Relaxinema.Core.Helpers;
 using Relaxinema.Core.Helpers.RepositoryParams;
 using Relaxinema.Infrastructure.DatabaseContext;
 using System.Linq.Expressions;
+using CloudinaryDotNet;
+using Microsoft.AspNetCore.Identity;
 using Relaxinema.Infrastructure.RepositoryHelpers;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
@@ -15,77 +17,88 @@ namespace Relaxinema.Infrastructure.Repositories
     {
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
-
-        public UserRepository(ApplicationDbContext context, IMapper mapper)
+        private readonly UserManager<User> _userManager;
+        private readonly RoleManager<IdentityRole<Guid>> _roleManager;
+    
+        public UserRepository(ApplicationDbContext context, IMapper mapper, RoleManager<IdentityRole<Guid>> roleManager, UserManager<User> userManager)
         {
             _context = context;
             _mapper = mapper;
+            _roleManager = roleManager;
+            _userManager = userManager;
         }
-
+    
         public async Task CreateAsync(User entity)
         {
             _context.Users.Add(entity);
             await _context.SaveChangesAsync();
         }
-
+    
         public async Task<bool> DeleteAsync(Guid id)
         {
             var user = _context.Users.FirstOrDefault(x => x.Id == id);
-
+    
             if (user == null)
                 return false;
-
+    
             _context.Users.Remove(user);
             return await _context.SaveChangesAsync() > 0;
         }
-
+    
         public async Task<PagedList<User>> GetAllAsync(UserParams userParams, string[]? includeProperties)
         {
             return await ApplyParams(userParams, includeProperties);
         }
-
+    
         public async Task<User?> GetByNicknameAsync(string nickname, string[]? includeProperties)
         {
             var query = IncludeProps(_context.Users.AsQueryable(), includeProperties);
             return await query.FirstOrDefaultAsync(u => u.Nickname == nickname);
         }
-
+    
         public async Task<User?> GetByIdAsync(Guid id, string[]? includeProperties)
         {
             var query = IncludeProps(_context.Users.AsQueryable(), includeProperties);
             return await query.FirstOrDefaultAsync(x => x.Id == id);
         }
-
+    
         public async Task<User?> GetByEmailAsync(string email, string[]? includeProperties)
         {
             var query = IncludeProps(_context.Users.AsQueryable(), includeProperties);
             return await query.FirstOrDefaultAsync(u => u.Email == email);
         }
-
+    
         public async Task<IEnumerable<string>?> GetEmailsByFilmAsync(Guid filmId)
         {
             var film = await _context.Films.Include(f => f.SubscribedUsers).FirstOrDefaultAsync(f => f.Id == filmId);
-
+    
             return film?.SubscribedUsers.Select(u => u.Email);
         }
-
+    
         private async Task<PagedList<User>> ApplyParams(UserParams userParams, string[]? includeProperties)
         {
             var query = _context.Users.AsQueryable();
-
+    
             query = IncludeProps(query, includeProperties);
+            
+            var role = await _roleManager.Roles.FirstOrDefaultAsync(r => r.NormalizedName == "admin");
 
             if (userParams.Admins.HasValue && userParams.Admins.Value)
-                query = query.Where(u => u.Roles.Any(r => r.Name == "admin"));
-
+                query = query.Include(u => u.Roles).Where(u => u.Roles.Any(ur => ur.RoleId == role.Id));
+    
             return await PagedList<User>.CreateAsync(query, userParams.PageNumber, userParams.PageSize);
+        }
+
+        private Func<User, Task<bool>> GetAdmins()
+        {
+            return async (u) => await _userManager.IsInRoleAsync(u, "admin");
         }
 
         private IQueryable<User> IncludeProps(IQueryable<User> query, string[]? includeStrings)
         {
             if(includeStrings is not null)
                 query = IncludeParamsHelper<User>.IncludeStrings(includeStrings, query);
-
+    
             return query;
         }
     }

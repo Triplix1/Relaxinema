@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Relaxinema.Core.Domain.Entities;
 using Relaxinema.Core.Domain.RepositoryContracts;
 using Relaxinema.Core.DTO.Rating;
@@ -10,14 +12,14 @@ public class RatingService : IRatingService
 {
     private readonly IRatingRepository _ratingRepository;
     private readonly IFilmRepository _filmRepository;
-    private readonly IUserRepository _userRepository;
+    private readonly UserManager<User> _userManager;
     private readonly IMapper _mapper;
 
-    public RatingService(IRatingRepository ratingRepository, IFilmRepository filmRepository, IUserRepository userRepository, IMapper mapper)
+    public RatingService(IRatingRepository ratingRepository, IFilmRepository filmRepository, UserManager<User> userManager, IMapper mapper)
     {
         _ratingRepository = ratingRepository;
         _filmRepository = filmRepository;
-        _userRepository = userRepository;
+        _userManager = userManager;
         _mapper = mapper;
     }
     
@@ -77,7 +79,7 @@ public class RatingService : IRatingService
     
     private async Task<User> GetUser(Guid userId)
     {
-        var user = await _userRepository.GetByIdAsync(userId);
+        var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == userId);
         
         if (user is null)
             throw new KeyNotFoundException("Cannot find user with such id");
