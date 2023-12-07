@@ -18,5 +18,6 @@ namespace Relaxinema.Core.Domain.RepositoryContracts
         Task<User?> GetByIdAsync(Guid id, string[]? includeProperties = null);
         Task CreateAsync(User entity);
         Task<bool> DeleteAsync(Guid id);
+        Task<User> UpdateAsync(User userToUpdate);
     }
 }

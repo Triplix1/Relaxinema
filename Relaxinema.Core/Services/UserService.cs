@@ -10,6 +10,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using Relaxinema.Core.DTO.Film;
 using Relaxinema.Core.Helpers.RepositoryParams;
 
 namespace Relaxinema.Core.Services
@@ -82,6 +83,20 @@ namespace Relaxinema.Core.Services
                 throw new KeyNotFoundException("doesn't contains film with such id");
 
             return emails;
+        }
+
+        public async Task<AccountInfoResponse> GetAccountInfo(Guid userId)
+        {
+            var user = await _userRepository.GetByIdAsync(userId, new[] { nameof(User.SubscribedTo) });
+
+            if (user is null)
+                throw new KeyNotFoundException("Cannot Find user with such id");
+
+            var accountResponse = _mapper.Map<AccountInfoResponse>(user);
+
+            accountResponse.SubscribedTo = _mapper.Map<IEnumerable<FilmCardResponse>>(user.SubscribedTo);
+
+            return accountResponse;
         }
     }
 }

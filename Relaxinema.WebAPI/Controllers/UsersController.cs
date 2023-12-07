@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Relaxinema.Core.Domain.RepositoryContracts;
 using Relaxinema.Core.DTO.User;
+using Relaxinema.Core.Extentions;
 using Relaxinema.Core.Helpers;
 using Relaxinema.Core.Helpers.RepositoryParams;
 using Relaxinema.Core.ServiceContracts;
@@ -31,5 +32,13 @@ public class UsersController : BaseController
     {
         await _userService.DeleteAsync(id);
         return Ok();
+    }
+
+    [HttpGet("account")]
+    [Authorize]
+    public async Task<ActionResult<AccountInfoResponse>> GetAccountInfo()
+    {
+        var userId = User.GetUserId();
+        return Ok(await _userService.GetAccountInfo(userId));
     }
 }

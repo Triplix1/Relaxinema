@@ -20,7 +20,8 @@ namespace Relaxinema.Core.Services
         private readonly ITokenService _tokenService;
         private readonly JwtHelper _jwtHelper;
 
-        public AuthorizationService(IUserRepository userRepository, ITokenService tokenService, IMapper mapper, IRoleService roleService, JwtHelper jwtHelper)
+        public AuthorizationService(IUserRepository userRepository, ITokenService tokenService, IMapper mapper,
+            IRoleService roleService, JwtHelper jwtHelper)
         {
             _userRepository = userRepository;
             _tokenService = tokenService;
@@ -28,7 +29,7 @@ namespace Relaxinema.Core.Services
             _roleService = roleService;
             _jwtHelper = jwtHelper;
         }
-        
+
         public async Task<AuthorizationResponse> LoginAsync(LoginDto loginDto)
         {
             var user = await _userRepository.GetByEmailAsync(loginDto.Email, new[] { nameof(User.Roles) });
@@ -46,6 +47,7 @@ namespace Relaxinema.Core.Services
 
             return new AuthorizationResponse
             {
+                PhotoUrl = user.PhotoUrl, 
                 Nickname = user.Nickname,
                 Token = _tokenService.CreateToken(user)
             };
@@ -83,37 +85,39 @@ namespace Relaxinema.Core.Services
 
             return new AuthorizationResponse
             {
+                PhotoUrl = user.PhotoUrl, 
                 Nickname = user.Nickname,
                 Token = _tokenService.CreateToken(user)
             };
         }
-        
+
         public async Task<AuthorizationResponse> ExternalLogin(ExternalAuthDto externalAuth)
         {
-            var payload =  await _jwtHelper.VerifyGoogleToken(externalAuth);
-        
-            if(payload == null)
+            var payload = await _jwtHelper.VerifyGoogleToken(externalAuth);
+
+            if (payload == null)
                 throw new ArgumentException("Invalid External Authentication.");
-            
-            var user = await _userRepository.GetByNicknameAsync(payload.Name);
+
+            var user = await _userRepository.GetByEmailAsync(payload.Email, new [] {nameof(User.Roles)});
+
             if (user is null)
             {
-                user = await _userRepository.GetByEmailAsync(payload.Email);
-                
-                if (user is null)
-                {
-                    user = new User { Email = payload.Email, Nickname = payload.Email, PhotoUrl = payload.Picture};
-                    await _userRepository.CreateAsync(user);
+                user = new User { Email = payload.Email, Nickname = payload.Email, PhotoUrl = payload.Picture };
+                await _userRepository.CreateAsync(user);
 
-                    await _roleService.AddToRoleAsync(user.Id, "user");
-                }
+                await _roleService.AddToRoleAsync(user.Id, "user");
             }
-            
+
             if (user is null)
                 throw new ArgumentException("Invalid External Authentication.");
 
             var token = _tokenService.CreateToken(user);
-            return new AuthorizationResponse() { Nickname = user.Nickname, Token = token };
+            return new AuthorizationResponse()
+            {
+                PhotoUrl = user.PhotoUrl, 
+                Nickname = user.Nickname, 
+                Token = token
+            };
         }
     }
 }

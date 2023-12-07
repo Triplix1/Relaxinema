@@ -39,6 +39,11 @@ namespace Relaxinema.Infrastructure.Repositories
             return await _context.SaveChangesAsync() > 0;
         }
 
+        public async Task<User> UpdateAsync(User userToUpdate)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<PagedList<User>> GetAllAsync(UserParams userParams, string[]? includeProperties)
         {
             return await ApplyParams(userParams, includeProperties);

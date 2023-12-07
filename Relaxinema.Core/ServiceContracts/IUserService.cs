@@ -18,5 +18,6 @@ namespace Relaxinema.Core.ServiceContracts
         Task<PagedList<UserResponse>> GetAllAsync(PaginatedParams pagination,bool? admins);
         Task DeleteAsync(Guid id);
         Task<IEnumerable<string>> GetSubscribedEmailsByFilm(Guid filmId);
+        Task<AccountInfoResponse> GetAccountInfo(Guid userId);
     }
 }
