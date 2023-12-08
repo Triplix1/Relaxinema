@@ -4,12 +4,6 @@ using Relaxinema.Core.Domain.RepositoryContracts;
 using Relaxinema.Core.DTO.User;
 using Relaxinema.Core.Helpers;
 using Relaxinema.Core.ServiceContracts;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 using Relaxinema.Core.DTO.Film;
 using Relaxinema.Core.Helpers.RepositoryParams;
 
@@ -20,12 +14,16 @@ namespace Relaxinema.Core.Services
         private readonly IUserRepository _userRepository;
         private readonly IFilmRepository _filmRepository;
         private readonly IMapper _mapper;
+        private readonly IPhotoService _photoService;
+        private const int PhotoHeight = 500;
+        private const int PhotoWidth = 500;
 
-        public UserService(IUserRepository userRepository, IFilmRepository filmRepository, IMapper mapper)
+        public UserService(IUserRepository userRepository, IFilmRepository filmRepository, IMapper mapper, IPhotoService photoService)
         {
             _userRepository = userRepository;
             _filmRepository = filmRepository;
             _mapper = mapper;
+            _photoService = photoService;
         }
 
         public async Task DeleteAsync(Guid id)
@@ -97,6 +95,35 @@ namespace Relaxinema.Core.Services
             accountResponse.SubscribedTo = _mapper.Map<IEnumerable<FilmCardResponse>>(user.SubscribedTo);
 
             return accountResponse;
+        }
+
+        public async Task<AccountInfoResponse> UpdateAsync(UserUpdateRequest userUpdateRequest)
+        {
+            var user = await _userRepository.GetByIdAsync(userUpdateRequest.Id);
+            
+            if (user is null)
+                throw new KeyNotFoundException("Cannot find user with such id");
+
+            var userWithTheSameNick = await _userRepository.GetByNicknameAsync(userUpdateRequest.Nickname);
+            
+            if (userWithTheSameNick is not null && userWithTheSameNick.Id != user.Id)
+                throw new ArgumentException("This nick has alrady been taken");
+                
+            user.Nickname = userUpdateRequest.Nickname;
+            
+            if (userUpdateRequest.File is not null)
+            {
+                if (user.PhotoPublicId is not null)
+                    await _photoService.DeletePhotoAsync(user.PhotoPublicId);
+
+                var imageResult = await _photoService.AddPhotoAsync(userUpdateRequest.File, PhotoHeight, PhotoWidth);
+                user.PhotoPublicId = imageResult.PublicId;
+                user.PhotoUrl = imageResult.SecureUrl.AbsoluteUri;
+            }
+
+            var response = await _userRepository.UpdateAsync(user);
+
+            return _mapper.Map<AccountInfoResponse>(response);
         }
     }
 }

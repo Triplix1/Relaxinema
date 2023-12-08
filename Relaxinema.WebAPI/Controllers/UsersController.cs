@@ -41,4 +41,16 @@ public class UsersController : BaseController
         var userId = User.GetUserId();
         return Ok(await _userService.GetAccountInfo(userId));
     }
+    
+    [HttpPut]
+    [Authorize]
+    public async Task<ActionResult<AccountInfoResponse>> Update([FromForm]UserUpdateRequest userUpdateRequest)
+    {
+        var userId = User.GetUserId();
+        
+        if (userUpdateRequest.Id != userId)
+            throw new ArgumentException("Id of users doesn't much");
+        
+        return Ok(await _userService.UpdateAsync(userUpdateRequest));
+    }
 }

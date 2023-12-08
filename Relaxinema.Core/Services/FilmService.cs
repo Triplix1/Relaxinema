@@ -17,6 +17,8 @@ namespace Relaxinema.Core.Services
         private readonly IPhotoService _photoService;
         private readonly ISubscriptionRepository _subscriptionRepository;
         private readonly IMailService _mailService;
+        private const int PhotoHeight = 750;
+        private const int PhotoWidth = 500;
         
         public FilmService(IFilmRepository filmRepository, IMapper mapper, IGenreRepository genreRepository, IPhotoService photoService, ISubscriptionRepository subscriptionRepository, IMailService mailService)
         {
@@ -45,7 +47,7 @@ namespace Relaxinema.Core.Services
 
             if (filmAddRequest.File is not null)
             {
-                var result = await _photoService.AddPhotoAsync(filmAddRequest.File);
+                var result = await _photoService.AddPhotoAsync(filmAddRequest.File, PhotoHeight, PhotoWidth);
 
                 if (result.Error != null) throw new ArgumentException(result.Error.Message);
 
@@ -136,7 +138,7 @@ namespace Relaxinema.Core.Services
             }
             else
             {
-                var result = await _photoService.AddPhotoAsync(filmUpdateRequest.File);
+                var result = await _photoService.AddPhotoAsync(filmUpdateRequest.File, PhotoHeight, PhotoWidth);
 
                 if (result.Error != null) throw new ArgumentException(result.Error.Message);
                 

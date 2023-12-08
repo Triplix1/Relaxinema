@@ -65,7 +65,11 @@ namespace Relaxinema.Core.MappingProfile
                 .ForMember(c => c.UserNickname, 
                     cr => 
                         cr.MapFrom(c => c.User.Nickname)
-                        );
+                        )
+                .ForMember(c => c.UserPhotoUrl, 
+                    co => 
+                    co.MapFrom(c => c.User.PhotoUrl)
+                    );
 
             CreateMap<Trailer, TrailerResponse>()
                 .ForMember(t => t.Trailer, 

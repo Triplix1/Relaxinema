@@ -19,5 +19,6 @@ namespace Relaxinema.Core.ServiceContracts
         Task DeleteAsync(Guid id);
         Task<IEnumerable<string>> GetSubscribedEmailsByFilm(Guid filmId);
         Task<AccountInfoResponse> GetAccountInfo(Guid userId);
+        Task<AccountInfoResponse> UpdateAsync(UserUpdateRequest userUpdateRequest);
     }
 }
