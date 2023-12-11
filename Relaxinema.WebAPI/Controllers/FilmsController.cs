@@ -1,13 +1,9 @@
-﻿using System.Runtime.CompilerServices;
-using Microsoft.AspNetCore.Mvc;
-using Org.BouncyCastle.Asn1.X509.Qualified;
+﻿using Microsoft.AspNetCore.Mvc;
 using Relaxinema.Core.DTO.Film;
 using Relaxinema.Core.Helpers;
 using Relaxinema.Core.Helpers.RepositoryParams;
 using Relaxinema.Core.ServiceContracts;
-using Relaxinema.WebAPI.Attributes;
 using Relaxinema.WebAPI.Controllers.Base;
-using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
 
 

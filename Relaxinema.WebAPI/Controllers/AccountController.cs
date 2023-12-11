@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Relaxinema.Core.DTO.Authorization;
 using Relaxinema.WebAPI.Controllers.Base;

@@ -5,11 +5,6 @@ using Relaxinema.Core.DTO.Genre;
 using Relaxinema.Core.Helpers;
 using Relaxinema.Core.Helpers.RepositoryParams;
 using Relaxinema.Core.ServiceContracts;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Relaxinema.Core.Services
 {
