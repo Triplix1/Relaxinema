@@ -42,6 +42,12 @@ namespace Relaxinema.WebAPI
                 .AllowAnyMethod()
                 .AllowCredentials()
                 .WithOrigins("http://localhost:4200"));
+            
+            app.UseCors(builder => builder
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials()
+                .WithOrigins("http://localhost:4201"));
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

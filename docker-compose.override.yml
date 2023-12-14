@@ -1,0 +1,20 @@
+version: '3.4'
+
+services:
+  relaxinemadb:
+    container_name: relaxinemadb
+    environment:
+        SA_PASSWORD: "SwN12345678"
+        ACCEPT_EULA: "Y"
+    restart: always
+    ports:
+        - "1433:1433"
+
+  relaxinema.webapi:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - "ConnectionStrings:DefaultConnection=Server=relaxinemadb;Database=Relaxinema;User Id=sa;Password=SwN12345678;TrustServerCertificate=True;TrustServerCertificate=True"
+    depends_on:
+      - relaxinemadb
+    ports:
+      - "8008:80"
