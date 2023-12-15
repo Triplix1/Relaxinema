@@ -1,0 +1,17 @@
+name: Publish to Docker
+on:
+  [workflow_dispatch]
+
+jobs:
+  publish_image:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+      - name: build
+        run: |
+          docker build . -t triplix/relaxinemawebapi:latest
+      - name: publish
+        run: |
+          docker login -u triplix -p ${{ secrets.DOCKER_HUB_TOKEN }}
+          docker push triplix/relaxinemawebapi:latest
