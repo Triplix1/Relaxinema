@@ -157,7 +157,7 @@ namespace Relaxinema.Core.Services
                     film.Genres.Add(foundGenre);
             }
 
-            if (oldFilm.IsExpected && !film.IsExpected)
+            if (oldFilm.IsExpected && !film.IsExpected && film.SubscribedUsers.Any())
             {
                 var message = new MessageRequest()
                 {

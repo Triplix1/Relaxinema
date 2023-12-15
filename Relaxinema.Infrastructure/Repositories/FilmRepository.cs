@@ -42,7 +42,7 @@ namespace Relaxinema.Infrastructure.Repositories
         public async Task<IEnumerable<Trailer>> GetTrailers(int n)
         {
             return await _context.Films
-                .Where(f => f.IsExpected)
+                .Where(f => f.IsExpected && f.Publish)
                 .Take(n)
                 .Select(f => new Trailer
                 {
