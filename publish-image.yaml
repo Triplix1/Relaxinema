@@ -10,7 +10,7 @@ jobs:
         uses: actions/checkout@v3
       - name: build
         run: |
-          docker build . -t triplix/relaxinemawebapi:latest
+          docker build . -t triplix/relaxinemawebapi:latest -f Relaxinema.WebAPI/Dockerfile
       - name: publish
         run: |
           docker login -u triplix -p ${{ secrets.DOCKER_HUB_TOKEN }}

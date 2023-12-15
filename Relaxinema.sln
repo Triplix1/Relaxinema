@@ -11,6 +11,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Relaxinema.Infrastructure",
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{005B95B1-31BA-45A1-86F0-1B016E7AFE0F}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{BD33B9B7-B16E-4B91-BE29-C23717EC05E1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{9CA880C9-384F-4B4C-84FC-C6368D5C1863}"
+	ProjectSection(SolutionItems) = preProject
+		publish-image.yaml = publish-image.yaml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,5 +46,8 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8CC89F16-4E32-42E3-9CD9-2CEEF14A085C}
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{9CA880C9-384F-4B4C-84FC-C6368D5C1863} = {BD33B9B7-B16E-4B91-BE29-C23717EC05E1}
 	EndGlobalSection
 EndGlobal
