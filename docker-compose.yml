@@ -2,7 +2,7 @@ version: '3.4'
 
 services:
   relaxinemadb:
-    image: mcr.microsoft.com/mssql/server:2017-latest
+    image: postgres
 
   relaxinema.webapi:
     image: ${DOCKER_REGISTRY-}relaxinemawebapi
@@ -15,3 +15,6 @@ services:
     build:
       context: ./client
       dockerfile: Dockerfile
+      
+volumes:
+  postgres_data:

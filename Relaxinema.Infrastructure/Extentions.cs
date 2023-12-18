@@ -22,9 +22,14 @@ namespace Relaxinema.Infrastructure
             services.AddScoped<ICommentRepository, CommentRepository>();
             services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
 
+            // services.AddDbContext<ApplicationDbContext>(options =>
+            // {
+            //     options.UseSqlServer(config.GetConnectionString("DefaultConnection"));
+            // });
+            
             services.AddDbContext<ApplicationDbContext>(options =>
             {
-                options.UseSqlServer(config.GetConnectionString("DefaultConnection"));
+                options.UseNpgsql(config.GetSection("ConnectionStrings").Value);
             });
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

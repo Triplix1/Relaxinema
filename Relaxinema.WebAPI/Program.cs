@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Net.Http.Headers;
 using Relaxinema.Core.Extentions;
 using Relaxinema.Core.Helpers;
 using Relaxinema.Core.MailConfig;
@@ -45,9 +46,10 @@ namespace Relaxinema.WebAPI
             
             app.UseCors(builder => builder
                 .AllowAnyHeader()
+                .WithExposedHeaders("Access-Control-Allow-Origin")
                 .AllowAnyMethod()
                 .AllowCredentials()
-                .WithOrigins("http://localhost:4201", "http://localhost:4200"));
+                .WithOrigins("http://localhost:4201", "http://localhost:4200", "https://relaxinema.onrender.com"));
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
