@@ -125,8 +125,8 @@ namespace Relaxinema.Infrastructure.Repositories
                 {
                     switch (currentOrderBy.OrderBy)
                     {
-                        case "Рік":
-                            query = query.OrderBy(f => f.Year ?? short.MaxValue);
+                        case "Дата":
+                            query = query.OrderBy(f => f.Created);
                             break;
                         case "Назва":
                             query = query.OrderBy(f => f.Name);
@@ -140,8 +140,8 @@ namespace Relaxinema.Infrastructure.Repositories
                 {
                     switch (currentOrderBy.OrderBy)
                     {
-                        case "Рік":
-                            query = query.OrderByDescending(f => f.Year ?? short.MaxValue);
+                        case "Дата":
+                            query = query.OrderByDescending(f => f.Created);
                             break;
                         case "Назва":
                             query = query.OrderByDescending(f => f.Name);

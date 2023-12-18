@@ -18,3 +18,9 @@ services:
       - relaxinemadb
     ports:
       - "8008:80"
+    
+  relaxinemaclient:
+    environment:
+      - "baseApiUrl:'http://localhost:8008/api/'"
+    ports:
+      - "4201:80"

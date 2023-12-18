@@ -9,3 +9,9 @@ services:
     build:
       context: .
       dockerfile: Relaxinema.WebAPI/Dockerfile
+      
+  relaxinemaclient:
+    image: ${DOCKER_REGISTRY-}relaxinemaclient
+    build:
+      context: ./client
+      dockerfile: Dockerfile
