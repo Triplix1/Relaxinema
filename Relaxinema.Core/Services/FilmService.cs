@@ -2,6 +2,7 @@
 using Relaxinema.Core.Domain.Entities;
 using Relaxinema.Core.Domain.RepositoryContracts;
 using Relaxinema.Core.DTO.Film;
+using Relaxinema.Core.Extentions;
 using Relaxinema.Core.Helpers;
 using Relaxinema.Core.Helpers.RepositoryParams;
 using Relaxinema.Core.MailConfig;
@@ -42,7 +43,7 @@ namespace Relaxinema.Core.Services
             }
             
             var film = _mapper.Map<Film>(filmAddRequest);
-            film.Created = DateTime.Now;
+            film.Created = DateTime.Now.SetKindUtc();
             film.Genres = new List<Genre>();
 
             if (filmAddRequest.File is not null)

@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using Relaxinema.Core.DTO.Comment;
 using Relaxinema.Core.DTO.Rating;
 using Relaxinema.Core.DTO.Subscribe;
+using Relaxinema.Core.Extentions;
 
 namespace Relaxinema.Core.MappingProfile
 {
@@ -59,7 +60,7 @@ namespace Relaxinema.Core.MappingProfile
             CreateMap<CommentAddRequest, Comment>()
                 .ForMember(c => c.Created, 
                     car => car
-                        .MapFrom(_ => DateTime.Now));
+                        .MapFrom(_ => DateTime.Now.SetKindUtc()));
             CreateMap<CommentUpdateRequest, Comment>();
             CreateMap<Comment, CommentResponse>()
                 .ForMember(c => c.UserNickname, 
