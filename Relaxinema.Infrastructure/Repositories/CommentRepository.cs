@@ -1,5 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Relaxinema.Core.Domain.Entities;
 using Relaxinema.Core.Domain.RepositoryContracts;

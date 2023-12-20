@@ -3,11 +3,9 @@ using Relaxinema.Core.Exceptions;
 using Relaxinema.Core.Domain.Entities;
 using Relaxinema.Core.Domain.RepositoryContracts;
 using Relaxinema.Core.Helpers;
-using Relaxinema.Core.Helpers.RepositoryParams;
 using Relaxinema.Core.ServiceContracts;
 using System.Security.Cryptography;
 using System.Text;
-using Relaxinema.Core.DTO.User;
 using Relaxinema.Core.DTO.Authorization;
 
 namespace Relaxinema.Core.Services

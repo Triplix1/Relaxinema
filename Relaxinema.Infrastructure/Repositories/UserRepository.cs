@@ -5,9 +5,7 @@ using Relaxinema.Core.Domain.RepositoryContracts;
 using Relaxinema.Core.Helpers;
 using Relaxinema.Core.Helpers.RepositoryParams;
 using Relaxinema.Infrastructure.DatabaseContext;
-using System.Linq.Expressions;
 using Relaxinema.Infrastructure.RepositoryHelpers;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Relaxinema.Infrastructure.Repositories
 {

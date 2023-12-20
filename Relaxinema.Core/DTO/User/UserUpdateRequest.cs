@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json;
 
 namespace Relaxinema.Core.DTO.User;
 

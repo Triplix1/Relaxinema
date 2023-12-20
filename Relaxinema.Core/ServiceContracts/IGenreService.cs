@@ -1,5 +1,4 @@
-﻿using Relaxinema.Core.Domain.Entities;
-using Relaxinema.Core.Helpers.RepositoryParams;
+﻿using Relaxinema.Core.Helpers.RepositoryParams;
 using Relaxinema.Core.Helpers;
 using Relaxinema.Core.DTO.Genre;
 

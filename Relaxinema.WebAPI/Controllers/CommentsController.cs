@@ -1,7 +1,5 @@
-﻿using System.Runtime.CompilerServices;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Relaxinema.Core.Domain.Entities;
 using Relaxinema.Core.DTO.Comment;
 using Relaxinema.Core.Extentions;
 using Relaxinema.Core.Helpers;

@@ -4,8 +4,6 @@ using System.Text;
 using Google.Apis.Auth;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using Relaxinema.Core.Domain.Entities;
-using Relaxinema.Core.DTO;
 using Relaxinema.Core.DTO.Authorization;
 
 namespace Relaxinema.Core.Helpers;

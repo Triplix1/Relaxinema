@@ -1,6 +1,4 @@
-﻿using MimeKit;
-
-namespace Relaxinema.Core.MailConfig;
+﻿namespace Relaxinema.Core.MailConfig;
 
 public class MessageRequest
 {

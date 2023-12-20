@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Net.Http.Headers;
 using Relaxinema.Core.Extentions;
 using Relaxinema.Core.Helpers;
 using Relaxinema.Core.MailConfig;

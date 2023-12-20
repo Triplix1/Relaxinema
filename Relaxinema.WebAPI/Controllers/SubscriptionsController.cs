@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.StaticFiles;
 using Relaxinema.Core.DTO.Subscribe;
 using Relaxinema.Core.Extentions;
 using Relaxinema.Core.ServiceContracts;

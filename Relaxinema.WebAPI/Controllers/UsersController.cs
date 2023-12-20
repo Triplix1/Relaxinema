@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Relaxinema.Core.Domain.RepositoryContracts;
 using Relaxinema.Core.DTO.User;
 using Relaxinema.Core.Extentions;
 using Relaxinema.Core.Helpers;

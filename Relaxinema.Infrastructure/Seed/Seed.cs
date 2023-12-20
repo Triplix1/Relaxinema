@@ -3,7 +3,6 @@ using System.Text;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using Relaxinema.Core.Domain.Entities;
-using Relaxinema.Core.Domain.RepositoryContracts;
 using Relaxinema.Core.ServiceContracts;
 using Relaxinema.Infrastructure.DatabaseContext;
 
