@@ -26,7 +26,7 @@ public class MailService : IMailService
 
         var builder = new BodyBuilder
         {
-            HtmlBody = GetBody(messageRequest.Content)
+            HtmlBody = messageRequest.Content
         };
         
         email.Body = builder.ToMessageBody();
@@ -40,9 +40,7 @@ public class MailService : IMailService
     private string GetBody(string content)
     {
         return
-            $@"<body style=""font-family: Arial, sans-serif; background-color: #ffcccc; text-align: center; padding: 20px;"">
-            <h1 style=""color: #ff0000;"">Film realized!</h1>
-            
+            $@"<body style=""font-family: Arial, sans-serif; background-color: #ffcccc; text-align: center; padding: 20px;"">            
             {content}
         </body>";
     }
@@ -57,11 +55,6 @@ public class MailService : IMailService
                 client.AuthenticationMechanisms.Remove("XOAUTH2");
                 await client.AuthenticateAsync(_mailConfig.DisplayName, _mailConfig.Password);
                 await client.SendAsync(mailMessage);
-            }
-            catch
-            {
-                //log an error message or throw an exception or both.
-                throw;
             }
             finally
             {

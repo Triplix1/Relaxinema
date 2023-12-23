@@ -66,11 +66,7 @@ namespace Relaxinema.Infrastructure.Repositories
         {
             var query = _context.Films.AsQueryable(); 
 
-            if (includeStrings is not null)
-            {
-                foreach (var str in includeStrings)
-                    query = query.Include(str);
-            }
+            query = IncludeParamsHelper<Film>.IncludeStrings(includeStrings, query);  
 
             return await query.FirstOrDefaultAsync(x => x.Id == id);
         }
